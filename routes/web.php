@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\IndexController;
+use App\Http\Controllers\HomePageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [IndexController::class, 'index']);
-Route::get('/show', [IndexController::class, 'show']);
+Route::get('/', [HomePageController::class, 'landingPage'])->name('home');
+Route::get('signup', [HomePageController::class, 'signupPage'])->name('signup');
+Route::get('login', [HomePageController::class, 'loginPage'])->name('login');

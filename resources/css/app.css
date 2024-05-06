@@ -1,3 +1,51 @@
+/* Import Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.label {
+    @apply text-neutral-700 text-2xl;
+}
+
+@layer components {
+    * {
+        /* @apply outline-[1px] outline-red-500 outline; */
+        font-family: "Manrope", sans-serif;
+    }
+}
+
+/* *********************************************************** */
+/* BUTTON PROPERTIES */
+
+.btn {
+    @apply grid justify-center items-center text-xs font-medium py-[.6rem] w-full max-w-[6rem] rounded-sm;
+    transition: 0.2s ease-in-out;
+}
+
+.btn-blue {
+    @apply text-shades-white bg-blue-500 hover:bg-blue-600;
+}
+
+.btn-ghost {
+    @apply text-neutral-600 bg-transparent outline-none border-[.3px] border-neutral-400 hover:bg-neutral-100;
+}
+
+/* *********************************************************** */
+
+/* *********************************************************** */
+/* INPUT PROPERTIES */
+.input__wrapper {
+    @apply grid gap-2;
+}
+
+.input-label {
+    @apply text-sm text-neutral-700;
+}
+
+.input {
+    @apply text-neutral-700 outline-0 border-b-[.3px] border-neutral-300 py-[.4rem] focus:border-neutral-500;
+    transition: 0.2s ease-in-out;
+}
+/* *********************************************************** */
