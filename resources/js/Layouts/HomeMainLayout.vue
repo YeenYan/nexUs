@@ -61,7 +61,7 @@ const testClick = () => {
 
 /* SIGNUP & LOGIN */
 :deep(.nav__wrapper) {
-    @apply flex w-full justify-start items-center gap-3 pl-[8rem];
+    @apply flex w-full justify-end items-center gap-3 pr-[11rem];
 }
 
 :deep(.right-bar) {

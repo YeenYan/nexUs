@@ -6,8 +6,6 @@ import { InertiaProgress } from "@inertiajs/progress";
 import { ZiggyVue } from "ziggy";
 import "../css/app.css";
 
-import BaseButton from "@resource/js/UI/BaseButton.vue";
-
 InertiaProgress.init({
     delay: 0,
     color: "#d946ef",
@@ -26,7 +24,6 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
-            .component("base-button", BaseButton)
             .mount(el);
     },
 });

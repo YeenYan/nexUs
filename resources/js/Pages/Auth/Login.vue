@@ -3,7 +3,7 @@
         <template #nav>
             <div class="nav__wrapper">
                 <p class="nav-text">Don't have an account?</p>
-                <Link :href="route('signup')" class="btn btn-blue"
+                <Link :href="route('user-account.create')" class="btn btn-blue"
                     >Sign up</Link
                 >
             </div>

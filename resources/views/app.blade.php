@@ -15,7 +15,7 @@
         @inertiaHead
 
     </head>
-    <body class="overflow-x-hidden">
+    <body class="overflow-hidden">
         @inertia
     </body>
 </html>

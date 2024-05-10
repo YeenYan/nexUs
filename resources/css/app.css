@@ -5,10 +5,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.label {
-    @apply text-neutral-700 text-2xl;
-}
-
 @layer components {
     * {
         /* @apply outline-[1px] outline-red-500 outline; */
@@ -16,8 +12,19 @@
     }
 }
 
-/* *********************************************************** */
-/* BUTTON PROPERTIES */
+/******************************************************
+*********************** GENERIC ***********************
+******************************************************/
+
+.line-divider {
+    @apply w-full h-[.01rem] bg-neutral-200;
+}
+
+/*****************************************************/
+
+/******************************************************
+*********************** BUTTON ************************
+******************************************************/
 
 .btn {
     @apply grid justify-center items-center text-xs font-medium py-[.6rem] w-full max-w-[6rem] rounded-sm;
@@ -29,23 +36,80 @@
 }
 
 .btn-ghost {
-    @apply text-neutral-600 bg-transparent outline-none border-[.3px] border-neutral-400 hover:bg-neutral-100;
+    @apply text-neutral-600 bg-neutral-50 outline-none border-[.3px] border-neutral-300 hover:bg-neutral-100;
 }
 
-/* *********************************************************** */
+/*****************************************************/
 
-/* *********************************************************** */
-/* INPUT PROPERTIES */
+/******************************************************
+*********************** INPUTS ************************
+******************************************************/
 .input__wrapper {
-    @apply grid gap-2;
+    @apply grid;
 }
 
 .input-label {
-    @apply text-sm text-neutral-700;
+    @apply text-sm text-neutral-600 mb-[-.1rem];
 }
 
 .input {
     @apply text-neutral-700 outline-0 border-b-[.3px] border-neutral-300 py-[.4rem] focus:border-neutral-500;
     transition: 0.2s ease-in-out;
 }
-/* *********************************************************** */
+
+/*****************************************************/
+
+/******************************************************
+*********************** AVATARS ***********************
+******************************************************/
+.avatar-selection__container {
+    @apply relative mb-[.5rem] h-[7rem] w-[7rem] overflow-hidden rounded-full border-[.1rem] border-neutral-300 border-dashed;
+}
+
+.avatar-selection__wrapper {
+    @apply flex justify-center items-center bg-neutral-100 h-full overflow-hidden;
+}
+
+.avatar-input {
+    @apply absolute top-0 h-full w-fit text-sm opacity-0;
+}
+
+.avatar-selection__wrapper > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+}
+
+.upload-icon {
+    @apply absolute w-[3rem] fill-blue-500;
+}
+
+.image-filename {
+    @apply text-sm text-neutral-500;
+}
+
+.avatar__container {
+    @apply grid gap-3;
+}
+
+.avatar__group {
+    @apply flex gap-3;
+}
+
+.avatar__wrapper {
+    @apply max-w-[3rem];
+}
+
+/*****************************************************/
+
+/******************************************************
+************************ ICONS ************************
+******************************************************/
+.icon {
+    @apply max-w-[1rem] fill-neutral-600;
+}
+
+.caretDown-icon {
+    @apply max-w-[.8rem] fill-neutral-600;
+}

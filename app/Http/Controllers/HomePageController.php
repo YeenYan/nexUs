@@ -13,10 +13,10 @@ class HomePageController extends Controller
         return inertia('HomePage/LandingPage');
     }
 
-    public function signupPage()
-    {
-        return inertia('HomePage/SignupPage');
-    }
+    // public function signupPage()
+    // {
+    //     return inertia('HomePage/SignupPage');
+    // }
 
     public function loginPage()
     {

@@ -1,6 +1,11 @@
 <?php
 
-use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\{
+ AuthController,
+ HomePageController,
+ UserAccountController,
+ WorkspaceController
+};
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,5 +20,23 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomePageController::class, 'landingPage'])->name('home');
-Route::get('signup', [HomePageController::class, 'signupPage'])->name('signup');
-Route::get('login', [HomePageController::class, 'loginPage'])->name('login');
+// Route::get('signup', [HomePageController::class, 'signupPage'])->name('signup');
+// Route::get('login', [HomePageController::class, 'loginPage'])->name('login');
+
+/*************************************
+ ********** AUTHENTICATION ***********
+ ************************************/
+Route::get('login', [AuthController::class, 'create'])->name('login');
+
+/*************************************
+ ******** USER REGISTRATION **********
+ ************************************/
+Route::resource('user-account', UserAccountController::class)
+ ->only(['create']);
+
+
+/*************************************
+ ************ WORKSPACE **************
+ ************************************/
+Route::resource('workspace', WorkspaceController::class)
+ ->only(['index', 'create']);

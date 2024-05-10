@@ -1,10 +1,7 @@
 <template>
     <HomeMainLayout>
         <template #nav>
-            <Link
-                :href="route('signup')"
-                class="btn btn-blue"
-                @click="testClick"
+            <Link :href="route('user-account.create')" class="btn btn-blue"
                 >Sign up</Link
             >
             <Link :href="route('login')" class="btn btn-ghost">Log in</Link>
