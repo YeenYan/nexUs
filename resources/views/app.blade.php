@@ -18,4 +18,8 @@
     <body class="overflow-hidden">
         @inertia
     </body>
+
+    <script>
+        window.currentRouteName = "{{ Route::currentRouteName() }}";
+    </script>
 </html>

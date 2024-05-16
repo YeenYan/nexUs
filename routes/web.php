@@ -1,11 +1,19 @@
 <?php
 
 use App\Http\Controllers\{
- AuthController,
- HomePageController,
- UserAccountController,
- WorkspaceController
+  AuthController,
+  HomePageController,
+  UserAccountController,
+  WorkspaceController
 };
+
+use App\Http\Controllers\Workspace\{
+  DashboardController,
+  MembersController,
+  NotificationsController
+};
+
+use App\Http\Controllers\Workspace\Collections\CollectionsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,11 +40,29 @@ Route::get('login', [AuthController::class, 'create'])->name('login');
  ******** USER REGISTRATION **********
  ************************************/
 Route::resource('user-account', UserAccountController::class)
- ->only(['create']);
+  ->only(['create']);
 
 
 /*************************************
  ************ WORKSPACE **************
  ************************************/
 Route::resource('workspace', WorkspaceController::class)
- ->only(['index', 'create']);
+  ->only(['index', 'create']);
+
+
+Route::prefix('workspace')
+  ->name('workspace.')
+  ->group(
+    function () {
+      Route::resource('dashboard', DashboardController::class)
+        ->only(['index']);
+      Route::resource('notifications', NotificationsController::class)
+        ->only(['index']);
+      Route::resource('members', MembersController::class)
+        ->only(['index']);
+    }
+  )
+  ->group(function () {
+    Route::resource('collections', CollectionsController::class)
+      ->only(['index', 'show']);
+  });

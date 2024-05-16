@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Workspace\Collections;
 
-use Inertia\Response;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Inertia\Response;
 
-class WorkspaceController extends Controller
+class CollectionsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): Response
     {
-        // return inertia('Workspace/Index');
-        return redirect()->route('workspace.dashboard.index');
+        return inertia('Workspace/Collections/Index');
     }
 
     /**
@@ -23,10 +23,10 @@ class WorkspaceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(): Response
-    {
-        return inertia('Workspace/Create');
-    }
+    // public function create()
+    // {
+    //     //
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -36,6 +36,7 @@ class WorkspaceController extends Controller
      */
     // public function store(Request $request)
     // {
+    //     //
     // }
 
     /**
@@ -44,9 +45,20 @@ class WorkspaceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function show($id)
-    // {
-    // }
+    public function show($id): Response
+    {
+        // dd($id);
+        // Decode the JSON string into an associative array
+        // $sections = json_decode($id);
+        // dd($sections);
+
+        return inertia(
+            'Workspace/Collections/Show',
+            [
+                'id' => (int)$id
+            ]
+        );
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -56,6 +68,7 @@ class WorkspaceController extends Controller
      */
     // public function edit($id)
     // {
+    //     //
     // }
 
     /**
@@ -67,6 +80,7 @@ class WorkspaceController extends Controller
      */
     // public function update(Request $request, $id)
     // {
+    //     //
     // }
 
     /**
@@ -77,5 +91,6 @@ class WorkspaceController extends Controller
      */
     // public function destroy($id)
     // {
+    //     //
     // }
 }

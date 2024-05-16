@@ -20,6 +20,15 @@
     @apply w-full h-[.01rem] bg-neutral-200;
 }
 
+/* BREADCRUMBS */
+.breadcrumbs-header {
+    @apply w-full px-[1.5rem] py-[.75rem] border-b-[.3px] border-neutral-400;
+}
+
+.breadcrumbs-header > p {
+    @apply text-base text-neutral-700;
+}
+
 /*****************************************************/
 
 /******************************************************
@@ -113,3 +122,5 @@
 .caretDown-icon {
     @apply max-w-[.8rem] fill-neutral-600;
 }
+
+/*****************************************************/

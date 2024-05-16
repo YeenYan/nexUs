@@ -1,0 +1,262 @@
+{
+    "collections": [
+        {
+            "collection_id": 1,
+            "collection_name": "Collection A",
+            "sections": [
+                {
+                    "section_id": "A1",
+                    "section_name": "Section 1-A",
+                    "tasks": [
+                        {
+                            "task_name": "Task 1-A",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 1-A",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "section_id": "A2",
+                    "section_name": "Section 2-A",
+                    "tasks": [
+                        {
+                            "task_name": "Task 2-A",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 2-A",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "section_id": "A3",
+                    "section_name": "Section 3-A",
+                    "tasks": [
+                        {
+                            "task_name": "Task 3-A",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 3-A",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "section_id": "A4",
+                    "section_name": "Section 4-A",
+                    "tasks": [
+                        {
+                            "task_name": "Task 4-A",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 4-A",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "section_id": "A5",
+                    "section_name": "Section 5-A",
+                    "tasks": [
+                        {
+                            "task_name": "Task 5-A",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 5-A",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "section_id": "A6",
+                    "section_name": "Section 6-A",
+                    "tasks": [
+                        {
+                            "task_name": "Task 6-A",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 6-A",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "collection_id": 2,
+            "collection_name": "Collection B",
+            "sections": [
+                {
+                    "section_id": "B1",
+                    "section_name": "Section 1-B",
+                    "tasks": [
+                        {
+                            "task_name": "Task 1-B",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 1-B",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "section_id": "B2",
+                    "section_name": "Section 2-B",
+                    "tasks": [
+                        {
+                            "task_name": "Task 2-B",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 2-B",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "collection_id": 3,
+            "collection_name": "Collection C",
+            "sections": [
+                {
+                    "section_id": "C1",
+                    "section_name": "Section 1-C",
+                    "tasks": [
+                        {
+                            "task_name": "Task 1-C",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 1-C",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "section_id": "C2",
+                    "section_name": "Section 2-C",
+                    "tasks": [
+                        {
+                            "task_name": "Task 2-C",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 2-C",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "section_id": "C3",
+                    "section_name": "Section 3-C",
+                    "tasks": [
+                        {
+                            "task_name": "Task 3-C",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 3-C",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "section_id": "C4",
+                    "section_name": "Section 4-C",
+                    "tasks": [
+                        {
+                            "task_name": "Task 4-C",
+                            "priority_type": "Urgent",
+                            "starred": true,
+                            "activities": [
+                                {
+                                    "activity_name": "Activity 4-C",
+                                    "status_type": "on-going",
+                                    "priority_type": "Urgent",
+                                    "due_date": "01/01/2000",
+                                    "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque aliquam praesentium aliquid quaerat illo sunt."
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

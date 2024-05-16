@@ -27,18 +27,26 @@
                 <!-- WORKSPACE GROUP -->
                 <div class="workspace-nav__group">
                     <ul>
-                        <li>
-                            <chartColumnIcon class="icon" />
-                            <p>Dashboard</p>
-                        </li>
-                        <li>
-                            <notificationIcon class="icon" />
-                            <p>Notification</p>
-                        </li>
-                        <li>
-                            <userIcon class="icon" />
-                            <p>Members</p>
-                        </li>
+                        <Link :href="route('workspace.dashboard.index')">
+                            <li :class="{ active: active.dashboard_active }">
+                                <chartColumnIcon class="icon" />
+                                <p>Dashboard</p>
+                            </li>
+                        </Link>
+                        <Link :href="route('workspace.notifications.index')">
+                            <li
+                                :class="{ active: active.notifications_active }"
+                            >
+                                <notificationIcon class="icon" />
+                                <p>Notification</p>
+                            </li>
+                        </Link>
+                        <Link :href="route('workspace.members.index')">
+                            <li :class="{ active: active.members_active }">
+                                <userIcon class="icon" />
+                                <p>Members</p>
+                            </li>
+                        </Link>
                     </ul>
                 </div>
                 <!------------------>
@@ -46,53 +54,41 @@
                 <div class="collection__container">
                     <div class="collection-header__wrapper">
                         <p>Collections</p>
-                        <plusIcon class="icon" />
+                        <plusIcon class="icon plus-icon" />
                     </div>
-                    <ul class="collection-lists__wrapper">
-                        <li class="collection-list">
-                            <div class="collection">
-                                <caretDownIcon class="caretDown-icon" />
-                                <p>Collection Name Here</p>
-                            </div>
-                            <ul class="section-lists__wrapper">
-                                <li class="section-list">
-                                    <div class="section-listname">
-                                        <circleIcon class="icon" />
-                                        <p>Section Name Here</p>
-                                    </div>
-                                    <div class="section-line">
-                                        <div></div>
-                                        <div></div>
-                                    </div>
-                                </li>
-                                <!-- <li class="section-list">
-                                    <div class="section-listname">
-                                        <circleIcon class="icon" />
-                                        <p>Section Name Here</p>
-                                    </div>
-                                    <div class="section-line">
-                                        <div></div>
-                                        <div></div>
-                                    </div>
-                                </li> -->
-                            </ul>
-                        </li>
-                    </ul>
+                    <Collections
+                        :collections="collections_data.collections"
+                        class="collection-content__wrapper"
+                    />
                 </div>
                 <!------------------>
             </nav>
-            <section class="workspace-section__wrapper"></section>
+            <section class="workspace-section__wrapper">
+                <slot></slot>
+            </section>
         </main>
     </div>
 </template>
 
 <script setup>
+import { Link } from "@inertiajs/vue3";
+/***************************
+ ********** ICONS *********/
 import caretDownIcon from "@public/svg/icons/caret-down.vue";
 import chartColumnIcon from "@public/svg/icons/chart-column.vue";
 import notificationIcon from "@public/svg/icons/notification.vue";
 import userIcon from "@public/svg/icons/user.vue";
 import plusIcon from "@public/svg/icons/plus.vue";
-import circleIcon from "@public/svg/icons/circle.vue";
+/**************************/
+import Collections from "@resource/js/Components/Collections.vue";
+
+import collections_data from "@resource/js/collections.json";
+
+const active = defineProps({
+    dashboard_active: Boolean,
+    members_active: Boolean,
+    notifications_active: Boolean,
+});
 </script>
 
 <style lang="postcss" scoped>
@@ -120,14 +116,14 @@ import circleIcon from "@public/svg/icons/circle.vue";
 *********************** MAIN ***********************
 ***************************************************/
 .workspace-main__wrapper {
-    @apply flex h-full;
+    @apply flex h-full overflow-hidden;
 }
 
 /***************************************************
 ******************** NAVIGATION ********************
 ***************************************************/
 .workspace-nav__wrapper {
-    @apply w-full max-w-[19rem] border-r-[.3px] border-neutral-400;
+    @apply w-full max-w-[19rem] h-full border-r-[.3px] border-neutral-400;
 }
 
 /* WORKSPACE NAME */
@@ -149,17 +145,20 @@ import circleIcon from "@public/svg/icons/circle.vue";
 }
 
 /* WORKSPACE NAV GROUP */
+.workspace-nav__wrapper {
+    @apply h-full;
+}
+
 .workspace-nav__group {
     @apply py-[.5rem] border-b-[.3px] border-neutral-400;
 }
 
-.workspace-nav__group ul,
-.collection-lists__wrapper {
+.workspace-nav__group ul {
     @apply px-[.8rem];
 }
 
 .workspace-nav__group ul li {
-    @apply flex gap-5 px-[1rem] py-[.7rem] hover:bg-blue-100 rounded;
+    @apply flex gap-5 px-[1rem] py-[.7rem] hover:bg-blue-100 rounded cursor-pointer;
     transition: 0.2s ease-in-out;
 }
 
@@ -167,65 +166,46 @@ import circleIcon from "@public/svg/icons/circle.vue";
     @apply text-sm text-neutral-700;
 }
 
+.active {
+    @apply bg-blue-100;
+}
+
+.active > .icon {
+    @apply fill-blue-600;
+}
+
+.active > p {
+    @apply text-blue-600 font-medium !important;
+}
+
 /* COLLECTIONS */
+.collection__container {
+    @apply h-full pb-[18rem];
+}
+
 .collection-header__wrapper {
-    @apply flex items-center justify-between px-[1.5rem] py-[.7rem];
+    @apply flex items-center justify-between px-[1.5rem] py-[.7rem] cursor-pointer;
 }
 
 .collection-header__wrapper > p {
     @apply text-sm font-medium text-neutral-700;
 }
 
-.collection-list {
-    @apply grid w-full;
+.collection-content__wrapper {
+    @apply max-h-full overflow-y-auto;
 }
 
-.collection {
-    @apply flex gap-5 w-full pl-[1rem] py-[.7rem] hover:bg-blue-100 rounded cursor-pointer;
-    transition: 0.2s ease-in-out;
+/* SCROLL BAR */
+.collection-content__wrapper::-webkit-scrollbar {
+    @apply w-[.4rem];
 }
 
-.collection > p {
-    @apply text-sm text-neutral-700;
+.collection-content__wrapper::-webkit-scrollbar-track {
+    @apply bg-blue-100 rounded-full;
 }
 
-.collection .caretDown-icon {
-    @apply -rotate-90;
-}
-
-/* SECTIONS */
-.section-list {
-    @apply relative ml-[1rem];
-}
-
-.section-list:hover > .section-listname {
-    @apply bg-blue-100;
-    transition: 0.2s ease-in-out;
-}
-
-.section-listname {
-    @apply flex gap-3 ml-[1.5rem] px-[1rem] py-[.7rem] rounded;
-}
-
-.section-listname > p {
-    @apply text-sm text-neutral-700;
-}
-
-.section-line {
-    @apply absolute top-0 left-[.4rem] w-full h-full;
-}
-
-.section-line > div:first-child {
-    @apply absolute top-[50%] w-[1rem] h-[.3px] bg-neutral-500;
-}
-
-.section-line > div:last-child {
-    @apply absolute w-[.3px] h-[50%] bg-neutral-500;
-}
-
-/* LINE FOR THE NEXT SECTION */
-.section-list:not(:first-child) > .section-line > div:last-child {
-    @apply top-[-50%] h-[150%];
+.collection-content__wrapper::-webkit-scrollbar-thumb {
+    @apply bg-blue-300 rounded-full;
 }
 
 /***************************************************
