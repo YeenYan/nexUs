@@ -65,13 +65,18 @@
             </nav>
             <section class="workspace-section__wrapper">
                 <slot></slot>
+                <p>{{ user.username }}</p>
+                <Link :href="route('logout')" method="delete" as="button"
+                    >Logout</Link
+                >
             </section>
         </main>
     </div>
 </template>
 
 <script setup>
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
+import { computed } from "vue";
 /***************************
  ********** ICONS *********/
 import caretDownIcon from "@public/svg/icons/caret-down.vue";
@@ -89,6 +94,12 @@ const active = defineProps({
     members_active: Boolean,
     notifications_active: Boolean,
 });
+
+const page = usePage();
+
+const flashSuccess = computed(() => page.props.flash.success);
+
+const user = computed(() => page.props.user);
 </script>
 
 <style lang="postcss" scoped>

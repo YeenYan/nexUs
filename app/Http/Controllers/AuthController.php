@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Inertia\Response;
 use Illuminate\Http\Request;
+// use Dotenv\Exception\ValidationException;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -33,10 +36,28 @@ class AuthController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    // public function store(Request $request)
-    // {
-    //     //
-    // }
+    public function store(Request $request)
+    {
+        if (!Auth::attempt(
+            $request->validate(
+                [
+                    'email' => 'required|string|email',
+                    'password' => 'required'
+                ]
+            ),
+            true
+        )) {
+            throw ValidationException::withMessages(
+                [
+                    'email' => 'Authentication failed'
+                ]
+            );
+        }
+
+        $request->session()->regenerate();
+
+        return redirect()->route('workspace.index');
+    }
 
     /**
      * Display the specified resource.
@@ -75,11 +96,15 @@ class AuthController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function destroy($id)
-    // {
-    //     //
-    // }
+    public function destroy(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('home');
+    }
 }

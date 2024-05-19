@@ -10,8 +10,8 @@
         </template>
         <div class="right-bar"></div>
 
-        <form>
-            <section class="signup__wrapper">
+        <form @submit.prevent="register">
+            <div class="signup__wrapper">
                 <div class="input__container">
                     <div class="signup__header">
                         <p>Sign up</p>
@@ -19,43 +19,105 @@
                     </div>
 
                     <div class="input__wrapper">
-                        <label class="input-label">Username</label>
-                        <input
-                            class="input"
-                            type="text"
-                            placeholder="Enter your username"
-                        />
+                        <label for="username" class="input-label"
+                            >Username</label
+                        >
+                        <div class="input__box">
+                            <input
+                                id="username"
+                                class="input"
+                                :class="
+                                    form.errors.username ? 'input-error' : ''
+                                "
+                                type="text"
+                                placeholder="Enter your username"
+                                v-model="form.username"
+                            />
+                            <p
+                                v-if="form.errors.username"
+                                class="input-error_icon"
+                            >
+                                !
+                            </p>
+                        </div>
+                        <p
+                            v-if="form.errors.username"
+                            class="input-error_label"
+                        >
+                            {{ form.errors.username }}
+                        </p>
                     </div>
 
                     <div class="input__wrapper">
-                        <label class="input-label">Email</label>
-                        <input
-                            class="input"
-                            type="email"
-                            placeholder="Enter your email"
-                        />
+                        <label for="email" class="input-label">Email</label>
+                        <div class="input__box">
+                            <input
+                                id="email"
+                                class="input"
+                                :class="form.errors.email ? 'input-error' : ''"
+                                type="email"
+                                placeholder="Enter your email"
+                                v-model="form.email"
+                            />
+                            <p
+                                v-if="form.errors.email"
+                                class="input-error_icon"
+                            >
+                                !
+                            </p>
+                        </div>
+                        <p v-if="form.errors.email" class="input-error_label">
+                            {{ form.errors.email }}
+                        </p>
                     </div>
 
                     <div class="input__wrapper">
-                        <label class="input-label">Create Password</label>
-                        <input
-                            class="input"
-                            type="password"
-                            placeholder="Enter your password"
-                        />
+                        <label for="password" class="input-label"
+                            >Create Password</label
+                        >
+                        <div class="input__box">
+                            <input
+                                id="password"
+                                class="input"
+                                :class="
+                                    form.errors.password ? 'input-error' : ''
+                                "
+                                type="password"
+                                placeholder="Enter your password"
+                                v-model="form.password"
+                            />
+                            <p
+                                v-if="form.errors.password"
+                                class="input-error_icon"
+                            >
+                                !
+                            </p>
+                        </div>
+                        <p
+                            v-if="form.errors.password"
+                            class="input-error_label"
+                        >
+                            {{ form.errors.password }}
+                        </p>
                     </div>
 
                     <div class="input__wrapper">
-                        <label class="input-label">Confirm Password</label>
-                        <input
-                            class="input"
-                            type="password"
-                            placeholder="Confirm password"
-                        />
+                        <label for="password_confirmation" class="input-label"
+                            >Confirm Password</label
+                        >
+                        <div class="input__box">
+                            <input
+                                id="password_confirmation"
+                                class="input"
+                                type="password"
+                                placeholder="Confirm password"
+                                v-model="form.password_confirmation"
+                            />
+                        </div>
                     </div>
 
                     <div class="btn__wrapper">
-                        <button class="btn btn-blue" @click.prevent="create">
+                        <button class="btn btn-blue" type="submit">
                             Create Account
                         </button>
                     </div>
@@ -69,13 +131,15 @@
                             <img :src="imageUrl" v-if="imageUrl" />
                             <uploadIcon class="upload-icon" v-if="!imageUrl" />
                             <input
-                                @change="handleImageChange"
                                 type="file"
                                 class="avatar-input"
+                                @change="handleImageChange"
+                                @input="handleImageChange"
                                 accept="image/*"
                             />
                         </div>
                     </div>
+                    <p>{{ form.errors.avatar }}</p>
                     <label class="image-filename">{{ fileName }}</label>
 
                     <!-- AVATAR SELECTION -->
@@ -177,7 +241,7 @@
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
         </form>
     </HomeMainLayout>
 </template>
@@ -185,10 +249,11 @@
 <script setup>
 import HomeMainLayout from "@resource/js/Layouts/HomeMainLayout.vue";
 import uploadIcon from "@public/svg/upload-icon.vue";
-import { Link, useForm } from "@inertiajs/vue3";
 import { ref, onMounted } from "vue";
+import { Link, useForm } from "@inertiajs/vue3";
 // Image Avatars
-import Avatar1 from "@public/avatar_images/tiger_avatar.svg";
+// import Avatar1 from "@public/avatar_images/tiger_avatar.svg";
+import Avatar1 from "@public/avatar_images/tiger.png";
 import Avatar2 from "@public/avatar_images/elephant_avatar.svg";
 import Avatar3 from "@public/avatar_images/duck_avatar.svg";
 import Avatar4 from "@public/avatar_images/fox_avatar.svg";
@@ -201,46 +266,73 @@ import Avatar10 from "@public/avatar_images/giraffe_avatar.svg";
 
 let imageUrl = ref("");
 let fileName = ref("No image chosen");
-let imageSrc = ref("");
 
-const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            imageUrl.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
-        // Set fileName to the selected file's name
-        fileName.value = file.name;
-    }
-    console.log(file);
+/*****************************************
+ *********** FORM SUBMISSION *************
+ ****************************************/
+
+const form = useForm({
+    username: null,
+    email: null,
+    password: null,
+    password_confirmation: null,
+    avatar: "test",
+});
+
+const register = () => {
+    form.post(route("user-account.store"));
 };
 
-let selectImage = (url) => {
-    imageUrl.value = url;
+/*****************************************
+ ** SELECTING IMAGE FROM LOCAL MACHINE ***
+ ****************************************/
+// const handleImageChange = (event) => {
+//     const file = event.target.files[0];
+//     form.avatar = event.target.files[0];
+//     if (file) {
+//         const reader = new FileReader();
+//         reader.onload = (e) => {
+//             imageUrl.value = e.target.result;
+//             form.avatar = file.name;
+//             // form.avatar = imageUrl.value;
+//             console.log(form.avatar);
+//         };
+//         reader.readAsDataURL(file);
+//         // Set fileName to the selected file's name
+//         fileName.value = file.name;
+//     }
+// };
 
-    // Getting the filename for the selected avatar
-    const filename = imageUrl.value.substring(
-        imageUrl.value.lastIndexOf("/") + 1
-    );
-    const avatarName = filename.split(".")[0];
+/*****************************************
+ ********* SELECTING AVATAR IMAGE ********
+ ****************************************/
+// let imageSrc = "";
+// let selectImage = (url) => {
+//     imageUrl.value = url;
 
-    fileName.value = avatarName;
-};
+//     // Getting the filename for the selected avatar
+//     const filename = imageUrl.value.substring(
+//         imageUrl.value.lastIndexOf("/") + 1
+//     );
+//     form.avatar = imageUrl;
+//     const avatarName = filename.split(".")[0];
+
+//     fileName.value = avatarName;
+//     // form.avatar = imageUrl.value;
+// };
 
 // onMounted(() => {
-//     imageUrl.value = Avatar6;
+//     imageUrl.value = "http://[::1]:5173/public/avatar_images/tiger_avatar.svg";
 // });
 
-const create = () => {
-    console.log(imageUrl.value);
-};
+// const create = () => {
+//     console.log(imageUrl.value);
+// };
 </script>
 
 <style lang="postcss" scoped>
 .signup__wrapper {
-    @apply grid gap-20 px-[8rem] py-[4rem];
+    @apply grid gap-20 px-[8rem] py-[3rem];
     grid-template-columns: 1fr 1.2fr;
 }
 

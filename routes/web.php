@@ -28,30 +28,32 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomePageController::class, 'landingPage'])->name('home');
-// Route::get('signup', [HomePageController::class, 'signupPage'])->name('signup');
-// Route::get('login', [HomePageController::class, 'loginPage'])->name('login');
 
 /*************************************
  ********** AUTHENTICATION ***********
  ************************************/
 Route::get('login', [AuthController::class, 'create'])->name('login');
+Route::post('login', [AuthController::class, 'store'])->name('login.store');
+Route::delete('logout', [AuthController::class, 'destroy'])->name('logout');
 
 /*************************************
  ******** USER REGISTRATION **********
  ************************************/
 Route::resource('user-account', UserAccountController::class)
-  ->only(['create']);
+  ->only(['create', 'store']);
 
 
 /*************************************
  ************ WORKSPACE **************
  ************************************/
 Route::resource('workspace', WorkspaceController::class)
+  ->middleware('auth')
   ->only(['index', 'create']);
 
 
 Route::prefix('workspace')
   ->name('workspace.')
+  ->middleware('auth')
   ->group(
     function () {
       Route::resource('dashboard', DashboardController::class)

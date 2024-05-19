@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Inertia\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
+
 
 class UserAccountController extends Controller
 {
@@ -33,10 +39,36 @@ class UserAccountController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    // public function store(Request $request)
-    // {
-    //     //
-    // }
+    public function store(Request $request)
+    {
+        // dd($request->avatar);
+
+        // Validate incoming request data
+        $user = User::create(
+            $request->validate(
+                [
+                    'username' => 'required',
+                    'email' => 'required|email|unique:users',
+                    'password' => 'required|min:8|confirmed',
+                    // 'avatar' => 'required|mimes:jpg,png,jpeg,webp|max:1024'
+                    'avatar' => 'required'
+                ]
+            )
+        );
+
+        // $filename = $request->username . '-';
+
+        // $imgData = Image::make($request->file('avatar'))->fit(120)->encode('jpg');
+        // Storage::put('public/avatars/' . $filename, $imgData);
+
+        $user->save();
+
+
+        // Save the users data to the database
+
+        // return with('success', 'Account Created');
+        return redirect()->route('workspace.index');
+    }
 
     /**
      * Display the specified resource.

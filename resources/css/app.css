@@ -57,13 +57,29 @@
     @apply grid;
 }
 
+.input__box {
+    @apply relative w-full bg-red-50;
+}
+
 .input-label {
     @apply text-sm text-neutral-600 mb-[-.1rem];
 }
 
 .input {
-    @apply text-neutral-700 outline-0 border-b-[.3px] border-neutral-300 py-[.4rem] focus:border-neutral-500;
+    @apply text-neutral-700 outline-0 border-b-[.3px] border-neutral-300 py-[.4rem] focus:border-neutral-500 w-full;
     transition: 0.2s ease-in-out;
+}
+
+.input-error {
+    @apply border-red-500 focus:border-red-500;
+}
+
+.input-error_icon {
+    @apply absolute top-[.8rem] right-0 text-xs text-shades-white bg-red-500 font-bold border-[1.3px] border-red-500 w-fit px-[.35rem] rounded-full;
+}
+
+.input-error_label {
+    @apply text-xs italic text-red-500 mt-[.2rem];
 }
 
 /*****************************************************/

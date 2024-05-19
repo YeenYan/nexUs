@@ -10,7 +10,7 @@
         </template>
         <div class="right-bar"></div>
 
-        <form>
+        <form @submit.prevent="login">
             <section class="login__wrapper">
                 <div class="input__container">
                     <div class="login__header">
@@ -20,20 +20,51 @@
 
                     <div class="input__wrapper">
                         <label class="input-label">Email</label>
-                        <input
-                            class="input"
-                            type="text"
-                            placeholder="Enter your email"
-                        />
+                        <div class="input__box">
+                            <input
+                                v-model="form.email"
+                                class="input"
+                                :class="form.errors.email ? 'input-error' : ''"
+                                type="text"
+                                placeholder="Enter your email"
+                            />
+                            <p
+                                v-if="form.errors.email"
+                                class="input-error_icon"
+                            >
+                                !
+                            </p>
+                        </div>
+                        <p v-if="form.errors.email" class="input-error_label">
+                            {{ form.errors.email }}
+                        </p>
                     </div>
 
                     <div class="input__wrapper">
                         <label class="input-label">Password</label>
-                        <input
-                            class="input"
-                            type="text"
-                            placeholder="Enter your password"
-                        />
+                        <div class="input__box">
+                            <input
+                                v-model="form.password"
+                                class="input"
+                                :class="
+                                    form.errors.password ? 'input-error' : ''
+                                "
+                                type="password"
+                                placeholder="Enter your password"
+                            />
+                            <p
+                                v-if="form.errors.password"
+                                class="input-error_icon"
+                            >
+                                !
+                            </p>
+                        </div>
+                        <p
+                            v-if="form.errors.password"
+                            class="input-error_label"
+                        >
+                            {{ form.errors.password }}
+                        </p>
                     </div>
 
                     <div class="btn__wrapper">
@@ -47,7 +78,14 @@
 
 <script setup>
 import HomeMainLayout from "@resource/js/Layouts/HomeMainLayout.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, useForm } from "@inertiajs/vue3";
+
+const form = useForm({
+    email: null,
+    password: null,
+});
+
+const login = () => form.post(route("login.store"));
 </script>
 
 <style lang="postcss" scoped>
