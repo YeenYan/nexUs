@@ -8,11 +8,15 @@
         </template>
         <div class="right-bar"></div>
 
-        <form>
+        <form @submit.prevent="create">
             <section class="workspace__container">
                 <div class="workspace-input__wrapper">
                     <label>Name your Workspace:</label>
-                    <input type="text" placeholder="Enter Workspace Name" />
+                    <input
+                        type="text"
+                        placeholder="Enter Workspace Name"
+                        v-model="form.workspace_name"
+                    />
                 </div>
 
                 <div class="line-divider"></div>
@@ -141,11 +145,10 @@
 
                 <div class="line-divider"></div>
 
+                <p>{{ form.errors }}</p>
+
                 <div class="btn__wrapper">
-                    <button
-                        class="btn btn-blue btn-create"
-                        @click.prevent="create"
-                    >
+                    <button class="btn btn-blue btn-create" type="submit">
                         Create Workspace
                     </button>
                 </div>
@@ -158,6 +161,7 @@
 import HomeMainLayout from "@resource/js/Layouts/HomeMainLayout.vue";
 import uploadIcon from "@public/svg/upload-icon.vue";
 import { ref } from "vue";
+import { Link, useForm } from "@inertiajs/vue3";
 
 let imageUrl = ref("");
 let fileName = ref("No image chosen");
@@ -174,6 +178,14 @@ const handleImageChange = (event) => {
         fileName.value = file.name;
     }
     console.log(file);
+};
+
+const form = useForm({
+    workspace_name: null,
+});
+
+const create = () => {
+    form.post(route("workspace.store"));
 };
 </script>
 

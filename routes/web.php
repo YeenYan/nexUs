@@ -48,7 +48,7 @@ Route::resource('user-account', UserAccountController::class)
  ************************************/
 Route::resource('workspace', WorkspaceController::class)
   ->middleware('auth')
-  ->only(['index', 'create']);
+  ->only(['index', 'create', 'store']);
 
 
 Route::prefix('workspace')

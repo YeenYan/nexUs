@@ -123,6 +123,13 @@
                     </div>
                 </div>
 
+                <!-- <input
+                    type="file"
+                    name="avatar"
+                    @change="handleImageChange"
+                    @input="handleImageChange"
+                />
+                <p>{{ form.errors.avatar }}</p> -->
                 <!-- IMAGE SELECTION -->
                 <div class="image__container">
                     <p class="input-label">Choose Avatar</p>
@@ -132,11 +139,13 @@
                             <uploadIcon class="upload-icon" v-if="!imageUrl" />
                             <input
                                 type="file"
-                                class="avatar-input"
+                                name="avatar"
                                 @change="handleImageChange"
                                 @input="handleImageChange"
-                                accept="image/*"
+                                class="avatar-input"
                             />
+                            <!-- 
+                                accept="image/*" -->
                         </div>
                     </div>
                     <p>{{ form.errors.avatar }}</p>
@@ -252,8 +261,7 @@ import uploadIcon from "@public/svg/upload-icon.vue";
 import { ref, onMounted } from "vue";
 import { Link, useForm } from "@inertiajs/vue3";
 // Image Avatars
-// import Avatar1 from "@public/avatar_images/tiger_avatar.svg";
-import Avatar1 from "@public/avatar_images/tiger.png";
+import Avatar1 from "@public/avatar_images/tiger_avatar.svg";
 import Avatar2 from "@public/avatar_images/elephant_avatar.svg";
 import Avatar3 from "@public/avatar_images/duck_avatar.svg";
 import Avatar4 from "@public/avatar_images/fox_avatar.svg";
@@ -272,54 +280,67 @@ let fileName = ref("No image chosen");
  ****************************************/
 
 const form = useForm({
-    username: null,
-    email: null,
-    password: null,
-    password_confirmation: null,
-    avatar: "test",
+    username: "user",
+    email: "user@user.com",
+    password: "12345678",
+    password_confirmation: "12345678",
+    avatar: null,
 });
 
 const register = () => {
+    console.log(form.avatar);
     form.post(route("user-account.store"));
 };
 
 /*****************************************
  ** SELECTING IMAGE FROM LOCAL MACHINE ***
  ****************************************/
-// const handleImageChange = (event) => {
-//     const file = event.target.files[0];
-//     form.avatar = event.target.files[0];
-//     if (file) {
-//         const reader = new FileReader();
-//         reader.onload = (e) => {
-//             imageUrl.value = e.target.result;
-//             form.avatar = file.name;
-//             // form.avatar = imageUrl.value;
-//             console.log(form.avatar);
-//         };
-//         reader.readAsDataURL(file);
-//         // Set fileName to the selected file's name
-//         fileName.value = file.name;
-//     }
-// };
+const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            imageUrl.value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        // Update fileName and form.avatar
+        fileName.value = file.name;
+        form.avatar = file;
+    }
+};
 
 /*****************************************
  ********* SELECTING AVATAR IMAGE ********
  ****************************************/
-// let imageSrc = "";
-// let selectImage = (url) => {
-//     imageUrl.value = url;
+let selectImage = async (url) => {
+    try {
+        // Fetch the image content from the URL
+        const response = await fetch(url);
+        const blob = await response.blob();
 
-//     // Getting the filename for the selected avatar
-//     const filename = imageUrl.value.substring(
-//         imageUrl.value.lastIndexOf("/") + 1
-//     );
-//     form.avatar = imageUrl;
-//     const avatarName = filename.split(".")[0];
+        // Getting the filename for the selected avatar
+        const filename = url.substring(url.lastIndexOf("/") + 1);
+        const avatarName = filename.split(".")[0];
+        const fileExtension = "svg";
 
-//     fileName.value = avatarName;
-//     // form.avatar = imageUrl.value;
-// };
+        // Create a File object with the fetched blob
+        const file = new File([blob], `${avatarName}.${fileExtension}`, {
+            type: blob.type, // MIME type from the fetched blob
+            lastModified: Date.now(), // Current timestamp
+        });
+
+        // Assign the File object to the form
+        form.avatar = file;
+
+        // If you have an image preview element, you can set its source to display the selected image
+        if (imageUrl) {
+            imageUrl.value = URL.createObjectURL(file);
+        }
+    } catch (error) {
+        console.error("Error fetching the image:", error);
+    }
+};
 
 // onMounted(() => {
 //     imageUrl.value = "http://[::1]:5173/public/avatar_images/tiger_avatar.svg";

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Inertia\Response;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
 use Intervention\Image\Facades\Image;
@@ -41,33 +43,43 @@ class UserAccountController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->avatar);
 
-        // Validate incoming request data
-        $user = User::create(
-            $request->validate(
-                [
-                    'username' => 'required',
-                    'email' => 'required|email|unique:users',
-                    'password' => 'required|min:8|confirmed',
-                    // 'avatar' => 'required|mimes:jpg,png,jpeg,webp|max:1024'
-                    'avatar' => 'required'
-                ]
-            )
-        );
+        // dd($request->hasFile('avatar'));
 
-        // $filename = $request->username . '-';
+        $validatedData = $request->validate([
+            'username' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8|confirmed',
+            'avatar' => 'required|image|mimes:jpg,png,jpeg,webp,svg,svg+xml|max:5000'
+        ]);
 
-        // $imgData = Image::make($request->file('avatar'))->fit(120)->encode('jpg');
-        // Storage::put('public/avatars/' . $filename, $imgData);
-
-        $user->save();
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $extension = $file->getClientOriginalExtension();
 
 
-        // Save the users data to the database
+            // Check if the file is an SVG
+            if ($extension === 'svg' || $file->getMimeType() === 'image/svg+xml') {
+                // Use the original filename for SVG files
+                $filename = $file->getClientOriginalName();
+            } else {
+                $filename = Str::slug($request->username) . '-' . Str::uuid() . '.' . $extension;
+            }
+
+
+            // Store the file in the public storage
+            $file->storeAs('avatars', $filename, 'public');
+
+            // Save only the filename in the database
+            $validatedData['avatar'] = $filename;
+        }
+
+        $user = User::create($validatedData);
+
+        Auth::login($user);
 
         // return with('success', 'Account Created');
-        return redirect()->route('workspace.index');
+        return redirect()->route('workspace.create');
     }
 
     /**

@@ -29,6 +29,10 @@
     @apply text-base text-neutral-700;
 }
 
+.error_box {
+    @apply text-sm text-center text-red-900 bg-red-400 px-[1rem] py-[1rem] rounded;
+}
+
 /*****************************************************/
 
 /******************************************************

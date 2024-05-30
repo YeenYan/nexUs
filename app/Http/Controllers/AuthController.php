@@ -49,14 +49,14 @@ class AuthController extends Controller
         )) {
             throw ValidationException::withMessages(
                 [
-                    'email' => 'Authentication failed'
+                    'all' => 'The provided email or password is incorrect',
                 ]
             );
         }
 
         $request->session()->regenerate();
 
-        return redirect()->route('workspace.index');
+        return redirect()->intended();
     }
 
     /**

@@ -2,55 +2,45 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    // This tells the model that your key is a type of string and not an integer (UUIDs are strings).
+    protected $keyType = 'string';
+    protected $primaryKey = 'user_id';
+
+    // tell the model not to use the incrementing system for this type of key
+    public $incrementing = false;
+
     protected $fillable = [
+        'user_id',
         'username',
         'email',
         'password',
         'avatar'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
+    public function getAuthIdentifierName()
+    {
+        return 'user_id';
+    }
 
     /**
-     * Summary of password
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     * This makes the password Hashed automatically before saving to the database
      */
     protected function password(): Attribute
     {
@@ -60,12 +50,33 @@ class User extends Authenticatable
         );
     }
 
-    // protected function avatar(): Attribute
-    // {
-    //     return Attribute::make(
-    //         get: function ($value) {
-    //             return $value ? '/storage/avatars/' . $value : '';
-    //         }
-    //     );
-    // }
+    /**
+     * Automatically generate a UUID for the user_id when creating a new user
+     * Concatinating the username to the user_id
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $uuid = (string) Str::uuid();
+                $shortUuid = self::shortenUuid($uuid);
+                $model->{$model->getKeyName()} = $model->username . '-' . $shortUuid;
+            }
+        });
+    }
+
+    /**
+     * This will shorten the generated UUID and used above
+     * @return string
+     */
+    private static function shortenUuid($uuid)
+    {
+        $hex = str_replace('-', '', $uuid); // Remove hyphens
+        $binary = hex2bin($hex);
+        $base64 = base64_encode($binary);
+        $base64Url = strtr($base64, '+/', '-_'); // Make it URL safe
+        return rtrim($base64Url, '='); // Remove padding
+    }
 }

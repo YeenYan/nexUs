@@ -67,6 +67,10 @@
                         </p>
                     </div>
 
+                    <div class="error_box" v-if="form.errors.all">
+                        <p>{{ form.errors.all }}</p>
+                    </div>
+
                     <div class="btn__wrapper">
                         <button class="btn btn-blue">Log In</button>
                     </div>

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Inertia\Response;
+use App\Models\Workspace;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 class WorkspaceController extends Controller
@@ -34,9 +36,27 @@ class WorkspaceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    // public function store(Request $request)
-    // {
-    // }
+    public function store(Request $request)
+    {
+        // $workspace_uuid = Str::uuid();
+
+
+
+        $request->user()->workspace()->create(
+            $request->validate(
+                [
+                    'workspace_name' => 'required|min:4',
+                ]
+            )
+        );
+
+        dd($request->all());
+        // $workspace_uuid = Str::uuid();
+
+        // $workspace->save();
+
+        return redirect()->route('workspace.index');
+    }
 
     /**
      * Display the specified resource.
