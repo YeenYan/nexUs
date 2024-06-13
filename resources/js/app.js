@@ -4,7 +4,12 @@ import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { InertiaProgress } from "@inertiajs/progress";
 import { ZiggyVue } from "ziggy";
+import store from "./store";
 import "../css/app.css";
+import AOS from "aos";
+import "aos/dist/aos.css"; // You can also use <link> for styles
+// ..
+AOS.init();
 
 InertiaProgress.init({
     delay: 0,
@@ -24,6 +29,7 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(store)
             .mount(el);
     },
 });

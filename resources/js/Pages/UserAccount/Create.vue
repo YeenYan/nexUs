@@ -123,17 +123,13 @@
                     </div>
                 </div>
 
-                <!-- <input
-                    type="file"
-                    name="avatar"
-                    @change="handleImageChange"
-                    @input="handleImageChange"
-                />
-                <p>{{ form.errors.avatar }}</p> -->
                 <!-- IMAGE SELECTION -->
                 <div class="image__container">
                     <p class="input-label">Choose Avatar</p>
-                    <div class="avatar-selection__container">
+                    <div
+                        class="avatar-selection__container"
+                        :class="form.errors.avatar ? 'avatar-error' : ''"
+                    >
                         <div class="avatar-selection__wrapper">
                             <img :src="imageUrl" v-if="imageUrl" />
                             <uploadIcon class="upload-icon" v-if="!imageUrl" />
@@ -144,11 +140,9 @@
                                 @input="handleImageChange"
                                 class="avatar-input"
                             />
-                            <!-- 
-                                accept="image/*" -->
                         </div>
                     </div>
-                    <p>{{ form.errors.avatar }}</p>
+                    <p class="input-error_label">{{ form.errors.avatar }}</p>
                     <label class="image-filename">{{ fileName }}</label>
 
                     <!-- AVATAR SELECTION -->
@@ -280,15 +274,14 @@ let fileName = ref("No image chosen");
  ****************************************/
 
 const form = useForm({
-    username: "user",
-    email: "user@user.com",
-    password: "12345678",
-    password_confirmation: "12345678",
+    username: null,
+    email: null,
+    password: null,
+    password_confirmation: null,
     avatar: null,
 });
 
 const register = () => {
-    console.log(form.avatar);
     form.post(route("user-account.store"));
 };
 
@@ -305,7 +298,7 @@ const handleImageChange = (event) => {
         reader.readAsDataURL(file);
 
         // Update fileName and form.avatar
-        fileName.value = file.name;
+        fileName = file.name;
         form.avatar = file;
     }
 };
@@ -324,6 +317,8 @@ let selectImage = async (url) => {
         const avatarName = filename.split(".")[0];
         const fileExtension = "svg";
 
+        fileName = filename;
+
         // Create a File object with the fetched blob
         const file = new File([blob], `${avatarName}.${fileExtension}`, {
             type: blob.type, // MIME type from the fetched blob
@@ -341,14 +336,6 @@ let selectImage = async (url) => {
         console.error("Error fetching the image:", error);
     }
 };
-
-// onMounted(() => {
-//     imageUrl.value = "http://[::1]:5173/public/avatar_images/tiger_avatar.svg";
-// });
-
-// const create = () => {
-//     console.log(imageUrl.value);
-// };
 </script>
 
 <style lang="postcss" scoped>

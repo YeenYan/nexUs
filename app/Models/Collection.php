@@ -4,27 +4,21 @@ namespace App\Models;
 
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Workspace extends Model
+class Collection extends Model
 {
     use HasFactory;
 
     // This tells the model that your key is a type of string and not an integer (UUIDs are strings).
     protected $keyType = 'string';
-    protected $primaryKey = 'workspace_id';
-
-    // tell the model not to use the incrementing system for this type of key
-    public $incrementing = false;
+    protected $primaryKey = 'collection_id';
 
     protected $fillable = [
-        'workspace_id',
-        'workspace_name',
-        'avatar',
-        'created_by',
-        'active'
+        'collection_id',
+        'collection_name',
+        'workspace_id'
     ];
 
     /**
@@ -39,7 +33,7 @@ class Workspace extends Model
             if (empty($model->{$model->getKeyName()})) {
                 $uuid = (string) Str::uuid();
                 $shortUuid = self::shortenUuid($uuid);
-                $model->{$model->getKeyName()} = 'wp-' . $shortUuid;
+                $model->{$model->getKeyName()} = 'col-' . $shortUuid;
             }
         });
     }
@@ -57,25 +51,10 @@ class Workspace extends Model
         return rtrim($base64Url, '='); // Remove padding
     }
 
-
-    /**
-     * Relationship where the Workspace belongs to an owner (user)
-     */
-    public function owner(): BelongsTo
+    public function workspace(): BelongsTo
     {
         return $this->belongsTo(
-            \App\Models\User::class,
-            'user_id'
-        );
-    }
-
-    /**
-     * Relationship where the Workspace has many Collections
-     */
-    public function collections(): HasMany
-    {
-        return $this->hasMany(
-            \App\Models\Collection::class,
+            \App\Models\Workspace::class,
             'workspace_id'
         );
     }

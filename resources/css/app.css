@@ -33,6 +33,36 @@
     @apply text-sm text-center text-red-900 bg-red-400 px-[1rem] py-[1rem] rounded;
 }
 
+.hover-bg__blue {
+    @apply hover:bg-blue-100 cursor-pointer;
+    transition: 0.1s ease-in-out;
+}
+
+/*****************************************************/
+
+/******************************************************
+**************** AOS CUSTOM ANIMATION *****************
+******************************************************/
+[data-aos="scale_up"] {
+    opacity: 0 !important;
+    transform: scale(0.8) !important;
+    transition: all 0.2s !important;
+
+    &.aos-animate {
+        opacity: 1 !important;
+        transform: scale(1) !important;
+    }
+}
+
+[data-aos="show_in"] {
+    opacity: 0 !important;
+    transition: all 0.1s ease-in-out !important;
+
+    &.aos-animate {
+        @apply opacity-30 !important;
+    }
+}
+
 /*****************************************************/
 
 /******************************************************
@@ -62,15 +92,15 @@
 }
 
 .input__box {
-    @apply relative w-full bg-red-50;
+    @apply relative w-full;
 }
 
 .input-label {
-    @apply text-sm text-neutral-600 mb-[-.1rem];
+    @apply text-sm text-neutral-600 mb-[.1rem];
 }
 
 .input {
-    @apply text-neutral-700 outline-0 border-b-[.3px] border-neutral-300 py-[.4rem] focus:border-neutral-500 w-full;
+    @apply text-neutral-700 outline-0 border-b-[.3px] border-neutral-300 py-[.4rem] focus:border-neutral-500 w-full bg-transparent;
     transition: 0.2s ease-in-out;
 }
 
@@ -93,6 +123,10 @@
 ******************************************************/
 .avatar-selection__container {
     @apply relative mb-[.5rem] h-[7rem] w-[7rem] overflow-hidden rounded-full border-[.1rem] border-neutral-300 border-dashed;
+}
+
+.avatar-error {
+    @apply border-red-500;
 }
 
 .avatar-selection__wrapper {

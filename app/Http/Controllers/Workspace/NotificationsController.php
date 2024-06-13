@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Workspace;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Inertia\Response;
+use App\Models\Workspace;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationsController extends Controller
 {
@@ -13,9 +15,16 @@ class NotificationsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): Response
+    public function index(Workspace $workspace): Response
     {
-        return inertia("Workspace/Notifications/Index");
+        return inertia(
+            "Workspace/Notifications/Index",
+            [
+                'all_workspaces' => Auth::user()->workspaces,
+                'workspace' => $workspace,
+                'avatar' => Auth::user()->avatar
+            ]
+        );
     }
 
     /**

@@ -5,9 +5,10 @@
             v-for="collection in collections"
             :key="collection.collection_id"
         >
-            <Link
+            <!-- <Link
                 :href="
                     route('workspace.collections.show', {
+                        workspace: 'wp-6ihDCGzeT32OXvCmmgX2Zw',
                         id: collection.collection_id,
                     })
                 "
@@ -20,7 +21,7 @@
                     <p>{{ collection.collection_name }}</p>
                 </div>
                 <Sections :sections="collection.sections" />
-            </Link>
+            </Link> -->
         </li>
     </ul>
 </template>

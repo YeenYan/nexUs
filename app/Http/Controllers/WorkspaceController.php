@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Inertia\Response;
 use App\Models\Workspace;
 use Illuminate\Support\Str;
@@ -14,20 +16,55 @@ class WorkspaceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        // return inertia('Workspace/Index');
-        return redirect()->route('workspace.dashboard.index');
-    }
+    // public function index()
+    // {
+    //     // return inertia(
+    //     //     "Workspace/Index"
+    //     // );
+    //     // return redirect()->route('workspace.dashboard.index');
+    // }
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(): Response
+    public function create(User $user): Response
     {
-        return inertia('Workspace/Create');
+        return inertia(
+            'Workspace/Create',
+            [
+                'user' => $user
+            ]
+        );
+    }
+
+    /**
+     * Deactivate the current active workspace and activate the new one.
+     */
+    public function switchWorkspace(Request $request)
+    {
+        $userId = Auth::user()->user_id;
+        $newWorkspaceId = $request->input('workspace_id');
+
+        // Deactivate the current active workspace
+        $this->deactivateCurrentActiveWorkspace($userId);
+
+        // Activate the new workspace
+        Workspace::where('workspace_id', $newWorkspaceId)->update(['active' => 1]);
+
+        // Redirect to the new workspace's dashboard
+        return redirect()->route('workspace.dashboard.index', ['workspace' => $newWorkspaceId]);
+    }
+
+    /**
+     * Deactivate the current active workspace of the user
+     */
+    protected function deactivateCurrentActiveWorkspace($userId)
+    {
+        Workspace::where('created_by', $userId)
+            ->where('active', 1)
+            ->update(['active' => 0]);
     }
 
     /**
@@ -38,24 +75,50 @@ class WorkspaceController extends Controller
      */
     public function store(Request $request)
     {
-        // $workspace_uuid = Str::uuid();
+        // dd(Auth::user()->username);
+        $current_user = Auth::user()->user_id;
 
-
-
-        $request->user()->workspace()->create(
-            $request->validate(
-                [
-                    'workspace_name' => 'required|min:4',
-                ]
-            )
+        $validatedData = $request->validate(
+            [
+                'workspace_name' => 'required|min:4',
+                'avatar' => 'required|image|mimes:jpg,png,jpeg,webp,svg,svg+xml|max:3000'
+            ]
         );
 
-        dd($request->all());
-        // $workspace_uuid = Str::uuid();
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $extension = $file->getClientOriginalExtension();
 
-        // $workspace->save();
 
-        return redirect()->route('workspace.index');
+            // Check if the file is an SVG
+            if ($extension === 'svg' || $file->getMimeType() === 'image/svg+xml') {
+                // Use the original filename for SVG files
+                $filename = $file->getClientOriginalName();
+            } else {
+                $filename = 'wp' . Str::uuid() . '.' . $extension;
+            }
+
+            // Store the file in the public storage
+            $file->storeAs('avatars/workspace', $filename, 'public');
+
+            // Save only the filename in the database
+            $validatedData['avatar'] = $filename;
+        }
+
+        // Deactivate the current active workspace
+        $this->deactivateCurrentActiveWorkspace($current_user);
+
+        // Set the new workspace as active
+        $validatedData['active'] = 1;
+
+        $user = User::find($current_user);
+
+        // Create a new workspace associated with the user who made the request.
+        $newWorkspace = $user->workspaces()->create($validatedData);
+
+        // dd($newWorkspace);
+
+        return redirect()->route('workspace.dashboard.index', ['workspace' => $newWorkspace->workspace_id]);
     }
 
     /**
@@ -64,9 +127,16 @@ class WorkspaceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function show($id)
-    // {
-    // }
+    public function show(Workspace $workspace): Response
+    {
+
+        return inertia(
+            "Workspace/Show",
+            [
+                'workspace' => $workspace
+            ]
+        );
+    }
 
     /**
      * Show the form for editing the specified resource.

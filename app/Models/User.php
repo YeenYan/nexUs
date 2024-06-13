@@ -8,11 +8,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Sanctum\HasApiTokens;
 
 
 class User extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory;
 
     // This tells the model that your key is a type of string and not an integer (UUIDs are strings).
     protected $keyType = 'string';
@@ -20,6 +22,8 @@ class User extends Authenticatable
 
     // tell the model not to use the incrementing system for this type of key
     public $incrementing = false;
+
+    protected $appends = ['src'];
 
     protected $fillable = [
         'user_id',
@@ -78,5 +82,36 @@ class User extends Authenticatable
         $base64 = base64_encode($binary);
         $base64Url = strtr($base64, '+/', '-_'); // Make it URL safe
         return rtrim($base64Url, '='); // Remove padding
+    }
+
+
+    /**
+     * Get the avatar attribute with the full storage path.
+     *
+     * This accessor automatically prepends the '/storage/avatars/' directory to the
+     * avatar filename stored in the database, providing the full URL to the avatar image.
+     *
+     */
+    public function avatar(): Attribute
+    {
+        return Attribute::make(get: function ($value) {
+            return '/storage/avatars/' . $value;
+        });
+    }
+
+    /**
+     * Relationship where the user has many Workspaces
+     */
+    public function workspaces(): HasMany
+    {
+        return $this->hasMany(
+            \App\Models\Workspace::class,
+            'created_by'
+        );
+    }
+
+    public function getSrcAttribute()
+    {
+        return asset("storage/{$this->avatar}");
     }
 }

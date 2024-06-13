@@ -44,13 +44,11 @@ class UserAccountController extends Controller
     public function store(Request $request)
     {
 
-        // dd($request->hasFile('avatar'));
-
         $validatedData = $request->validate([
             'username' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
-            'avatar' => 'required|image|mimes:jpg,png,jpeg,webp,svg,svg+xml|max:5000'
+            'avatar' => 'required|image|mimes:jpg,png,jpeg,webp,svg,svg+xml|max:3000'
         ]);
 
         if ($request->hasFile('avatar')) {

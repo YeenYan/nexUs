@@ -85,8 +85,8 @@ import HomeMainLayout from "@resource/js/Layouts/HomeMainLayout.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
 const form = useForm({
-    email: null,
-    password: null,
+    email: "mark@test.com",
+    password: "12345678",
 });
 
 const login = () => form.post(route("login.store"));

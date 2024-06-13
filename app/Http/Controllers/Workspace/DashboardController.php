@@ -2,20 +2,39 @@
 
 namespace App\Http\Controllers\Workspace;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Inertia\Response;
+use App\Models\Workspace;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
+    // public function __contruct()
+    // {
+    //     $this->authorizeResource(Workspace::class, 'workspace');
+    // }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): Response
+    public function index(Workspace $workspace): Response
     {
-        return inertia("Workspace/Dashboard/Index");
+        // dd($workspace->workspace_id);
+        // dd($workspace);
+
+        return inertia(
+            "Workspace/Dashboard/Index",
+            [
+                'all_workspaces' => Auth::user()->workspaces,
+                'workspace' => $workspace,
+                'avatar' => Auth::user()->avatar
+            ]
+        );
+
+        // 'workspace' => Auth::user()->workspaces,
     }
 
     /**

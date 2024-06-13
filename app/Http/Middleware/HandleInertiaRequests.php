@@ -45,7 +45,9 @@ class HandleInertiaRequests extends Middleware
                 'user_id' => $request->user()->user_id,
                 'username' => $request->user()->username,
                 'email' => $request->user()->email,
-            ] : null
+            ] : null,
+            // 'avatar' => $request->user()->avatar
+            // 'workspaces' => $request->user()->workspaces
         ]);
     }
 }

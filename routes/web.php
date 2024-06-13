@@ -15,6 +15,7 @@ use App\Http\Controllers\Workspace\{
 
 use App\Http\Controllers\Workspace\Collections\CollectionsController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,14 +47,15 @@ Route::resource('user-account', UserAccountController::class)
 /*************************************
  ************ WORKSPACE **************
  ************************************/
+
 Route::resource('workspace', WorkspaceController::class)
   ->middleware('auth')
-  ->only(['index', 'create', 'store']);
+  ->only(['index', 'create', 'store', 'show']);
 
 
-Route::prefix('workspace')
+Route::prefix('workspace/{workspace}')
   ->name('workspace.')
-  ->middleware('auth')
+  ->middleware(['auth'])
   ->group(
     function () {
       Route::resource('dashboard', DashboardController::class)
@@ -62,9 +64,25 @@ Route::prefix('workspace')
         ->only(['index']);
       Route::resource('members', MembersController::class)
         ->only(['index']);
+      // Route::resource('collections', CollectionsController::class)
+      //   ->only(['store']);
     }
   )
   ->group(function () {
     Route::resource('collections', CollectionsController::class)
       ->only(['index', 'show']);
   });
+
+
+/*************************************
+ *** SWITCHING BETWEEN WORKSPACES ****
+ ************************************/
+Route::post('/workspace/switch', [WorkspaceController::class, 'switchWorkspace'])->name('workspace.switch');
+
+/*************************************
+ *** NAVIGATE TO THE PREVIOUS PAGE ***
+ ************************************/
+
+Route::get('/previous', function () {
+  return redirect()->back();
+})->name('previous');
