@@ -14,6 +14,7 @@ use App\Http\Controllers\Workspace\{
 };
 
 use App\Http\Controllers\Workspace\Collections\CollectionsController;
+use App\Http\Controllers\Workspace\Sections\SectionsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -53,7 +54,7 @@ Route::resource('workspace', WorkspaceController::class)
   ->only(['index', 'create', 'store', 'show']);
 
 
-Route::prefix('workspace/{workspace}')
+Route::prefix('{workspace}')
   ->name('workspace.')
   ->middleware(['auth'])
   ->group(
@@ -64,14 +65,31 @@ Route::prefix('workspace/{workspace}')
         ->only(['index']);
       Route::resource('members', MembersController::class)
         ->only(['index']);
-      // Route::resource('collections', CollectionsController::class)
-      //   ->only(['store']);
+      Route::get('{collection_id}', [CollectionsController::class, 'index'])->name('collections.index');
+      Route::resource('collections', CollectionsController::class)
+        ->only(['store']);
+
+      Route::prefix('{collection_id}')
+        ->name('collection.')
+        ->group(function () {
+          Route::resource('sections', SectionsController::class)->only(['store']);
+        });
     }
-  )
-  ->group(function () {
-    Route::resource('collections', CollectionsController::class)
-      ->only(['index', 'show']);
-  });
+  );
+// Route::prefix('{collection_id}')
+//   ->name('collection.')
+//   ->group(
+//     function () {
+//       Route::resource('sections', SectionsController::class)
+//         ->only(['store']);
+//     }
+//   );
+
+
+
+
+
+
 
 
 /*************************************

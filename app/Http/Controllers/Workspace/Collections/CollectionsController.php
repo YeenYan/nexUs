@@ -8,9 +8,19 @@ use App\Models\Collection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Services\WorkspaceService;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Redirect;
 
 class CollectionsController extends Controller
 {
+    protected $workspaceService;
+
+    public function __construct(WorkspaceService $workspaceService)
+    {
+        $this->workspaceService = $workspaceService;
+    }
+
     // public function __construct()
     // {
 
@@ -20,14 +30,18 @@ class CollectionsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): Response
+    public function index(Workspace $workspace, Request $request): Response
     {
+        $data = $this->workspaceService->getWorkspaceData($workspace);
+
+        // dd($request->view);
+
         return inertia(
             'Workspace/Collections/Index',
-            [
-                'workspace' => Auth::user()->workspaces,
-                'avatar' => Auth::user()->avatar
-            ]
+            array_merge(
+                $data,
+                ['collection_id' => $request->collection_id]
+            )
         );
     }
 
@@ -47,10 +61,36 @@ class CollectionsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Workspace $workspace)
     {
-        dd($request);
         // dd(Workspace::all());
+
+        // Get the current active workspace ID
+        $current_workspace_id = $this->workspaceService->getActiveWorkspace()->workspace_id;
+
+        // Validate the request data
+        $validateData = $request->validate(
+            [
+                'collection_name' => 'required|min:4'
+            ]
+        );
+
+        // Add the current workspace ID to the validated data
+        $validateData['workspace_id'] = $current_workspace_id;
+
+        // Create the new collection
+        $newCollection = Collection::create($validateData);
+
+        // Get the ID of the newly created collection
+        $newCollectionID = $newCollection->collection_id;
+
+        // Retrieve the workspace data (this line seems unused, consider removing it if not needed)
+        $data = $this->workspaceService->getWorkspaceData($workspace);
+
+        return redirect()->route('workspace.collections.index', [
+            'workspace' => $current_workspace_id,
+            'collection_id' => $newCollectionID,
+        ]);
     }
 
     /**
@@ -59,20 +99,32 @@ class CollectionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id): Response
+    public function show(Workspace $workspace, $collection_id): Response
     {
-        // dd($id);
-        // Decode the JSON string into an associative array
-        // $sections = json_decode($id);
-        // dd($sections);
+        // dd($this->workspaceService->getSpecificCollections($id));
+        // dd($workspace->collections()->where('collection_id', $id));
+        // dd($workspace->collections());
+
+        // $workspaceId = 'wp-6ihDCGzeT32OXvCmmgX2Zw';
+        // $workspace = Workspace::find($workspaceId);
+        // $collections = $workspace->collections()->where('collection_id', $id)->get();
+        // // Extract the collection names
+        // $collectionNames = $collections->pluck('collection_name');
+
+        // // Display the collection names
+        // dd($collections);
+
+        $data = $this->workspaceService->getWorkspaceData($workspace);
 
         return inertia(
             'Workspace/Collections/Show',
-            [
-                'id' => (int)$id,
-                'avatar' => Auth::user()->avatar,
-                'workspace' => Auth::user()->workspaces,
-            ]
+            array_merge(
+                $data,
+                ['collection_id' => $collection_id],
+                // [
+                //     'all_collections' => $col
+                // ]
+            )
         );
     }
 

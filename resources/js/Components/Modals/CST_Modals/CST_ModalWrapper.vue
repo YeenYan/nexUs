@@ -38,16 +38,16 @@ import { useStore } from "vuex";
 
 const store = useStore();
 
-const isClose = computed(() => store.state.is_close);
+const isClose = computed(() => store.state.active_CST_container);
 
 const close_modal = () => {
-    store.commit("setIsClose", false);
+    store.commit("setCSTContainerisClose", false);
 };
 </script>
 
 <style lang="postcss" scoped>
 .CST-modal__container {
-    @apply absolute top-0 flex items-center justify-center w-full h-full;
+    @apply absolute top-0 flex items-center justify-center w-full h-full z-[6];
 }
 
 .blanket__wrapper {

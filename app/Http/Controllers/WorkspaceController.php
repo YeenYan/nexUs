@@ -2,27 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Inertia\Response;
 use App\Models\Workspace;
+use App\Models\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Services\WorkspaceService;
+use Illuminate\Support\Facades\Auth;
 
 class WorkspaceController extends Controller
 {
+    protected $workspaceService;
+
+    public function __construct(WorkspaceService $workspaceService)
+    {
+        $this->workspaceService = $workspaceService;
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    // public function index()
-    // {
-    //     // return inertia(
-    //     //     "Workspace/Index"
-    //     // );
-    //     // return redirect()->route('workspace.dashboard.index');
-    // }
+    public function index()
+    {
+        return $this->workspaceService->redirectToActiveWorkspace();
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -127,15 +133,9 @@ class WorkspaceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Workspace $workspace): Response
+    public function show(Workspace $workspace)
     {
-
-        return inertia(
-            "Workspace/Show",
-            [
-                'workspace' => $workspace
-            ]
-        );
+        return $this->workspaceService->redirectToActiveWorkspace();
     }
 
     /**

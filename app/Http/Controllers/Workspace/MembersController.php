@@ -7,9 +7,16 @@ use App\Models\Workspace;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Services\WorkspaceService;
 
 class MembersController extends Controller
 {
+    protected $workspaceService;
+
+    public function __construct(WorkspaceService $workspaceService)
+    {
+        $this->workspaceService = $workspaceService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,13 +24,11 @@ class MembersController extends Controller
      */
     public function index(Workspace $workspace): Response
     {
+        $data = $this->workspaceService->getWorkspaceData($workspace);
+
         return inertia(
             'Workspace/Members/Index',
-            [
-                'all_workspaces' => Auth::user()->workspaces,
-                'workspace' => $workspace,
-                'avatar' => Auth::user()->avatar
-            ]
+            $data
         );
     }
 

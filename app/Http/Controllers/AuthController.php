@@ -7,9 +7,16 @@ use Illuminate\Http\Request;
 // use Dotenv\Exception\ValidationException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use App\Services\WorkspaceService;
 
 class AuthController extends Controller
 {
+    protected $workspaceService;
+
+    public function __construct(WorkspaceService $workspaceService)
+    {
+        $this->workspaceService = $workspaceService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -56,31 +63,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        // dd(Auth::user()->workspaces);
-
-        // Fetch the user's workspaces
-        $userWorkspaces = Auth::user()->workspaces;
-
-        // Filter the workspaces where the active column is 1
-        $activeWorkspaces = $userWorkspaces->filter(function ($workspace) {
-            return $workspace->active == 1;
-        });
-
-        // Get the first active workspace (assuming you want to redirect to the first one found)
-        $activeWorkspace = $activeWorkspaces->first();
-
-        // Check if an active workspace was found
-        if ($activeWorkspace) {
-            // Redirect to the 'dashboard' route with the workspace_id parameter
-            return redirect()->route('workspace.dashboard.index', ['workspace' => $activeWorkspace->workspace_id]);
-        } else {
-            // Handle case where no active workspace was found
-            // Redirect to a default route or return an error response
-            return redirect()->route(
-                'workspace.show',
-                ['workspace' => $activeWorkspace->workspace_id]
-            );
-        }
+        return $this->workspaceService->redirectToActiveWorkspace();
     }
 
     /**

@@ -20,6 +20,11 @@
     @apply w-full h-[.01rem] bg-neutral-200;
 }
 
+/* CONTAINER STYLE FOR COLLECTIONS AND SO ON */
+.container {
+    @apply p-[1.5rem];
+}
+
 /* BREADCRUMBS */
 .breadcrumbs-header {
     @apply w-full px-[1.5rem] py-[.75rem] border-b-[.3px] border-neutral-400;
@@ -29,10 +34,12 @@
     @apply text-base text-neutral-700;
 }
 
+/* FOR ERROR MESSAGE BOX */
 .error_box {
     @apply text-sm text-center text-red-900 bg-red-400 px-[1rem] py-[1rem] rounded;
 }
 
+/* HOVER BACKGROUND COLOR EFFECT */
 .hover-bg__blue {
     @apply hover:bg-blue-100 cursor-pointer;
     transition: 0.1s ease-in-out;
@@ -56,7 +63,7 @@
 
 [data-aos="show_in"] {
     opacity: 0 !important;
-    transition: all 0.1s ease-in-out !important;
+    transition: all 0.4s ease-in-out !important;
 
     &.aos-animate {
         @apply opacity-30 !important;

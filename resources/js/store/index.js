@@ -6,7 +6,9 @@ const store = createStore({
     state: {
         /*****************
          **** MODALS ****/
-        is_close: false,
+        active_CST_container: false,
+        active_add_collection_modal: false,
+        active_add_section_modal: false,
 
         /****************
          ****-----******/
@@ -16,8 +18,16 @@ const store = createStore({
     mutations: {
         /*****************
          **** MODALS ****/
-        setIsClose(state, newValue) {
-            state.is_close = newValue;
+        setCSTContainerisClose(state, newValue) {
+            state.active_CST_container = newValue;
+        },
+        setAddCollectionModalIsClose(state, newValue) {
+            state.active_CST_container = newValue;
+            state.active_add_collection_modal = newValue;
+        },
+        setAddSectionModalIsClose(state, newValue) {
+            state.active_CST_container = newValue;
+            state.active_add_section_modal = newValue;
         },
         /*****************
          **** ------ ****/

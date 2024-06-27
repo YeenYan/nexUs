@@ -8,9 +8,16 @@ use Inertia\Response;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\WorkspaceService;
 
 class DashboardController extends Controller
 {
+    protected $workspaceService;
+
+    public function __construct(WorkspaceService $workspaceService)
+    {
+        $this->workspaceService = $workspaceService;
+    }
     // public function __contruct()
     // {
     //     $this->authorizeResource(Workspace::class, 'workspace');
@@ -22,19 +29,12 @@ class DashboardController extends Controller
      */
     public function index(Workspace $workspace): Response
     {
-        // dd($workspace->workspace_id);
-        // dd($workspace);
+        $data = $this->workspaceService->getWorkspaceData($workspace);
 
         return inertia(
             "Workspace/Dashboard/Index",
-            [
-                'all_workspaces' => Auth::user()->workspaces,
-                'workspace' => $workspace,
-                'avatar' => Auth::user()->avatar
-            ]
+            $data
         );
-
-        // 'workspace' => Auth::user()->workspaces,
     }
 
     /**

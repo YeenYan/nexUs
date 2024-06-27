@@ -2,47 +2,62 @@
     <ul class="collection-lists__wrapper">
         <li
             class="collection-list"
-            v-for="collection in collections"
+            v-for="collection in props.collections"
             :key="collection.collection_id"
         >
-            <!-- <Link
+            <Link
+                class="collection"
                 :href="
-                    route('workspace.collections.show', {
-                        workspace: 'wp-6ihDCGzeT32OXvCmmgX2Zw',
-                        id: collection.collection_id,
+                    route('workspace.collections.index', {
+                        workspace: workspace_id,
+                        collection_id: collection.collection_id,
                     })
                 "
+                :class="
+                    props.collection_id === collection.collection_id
+                        ? 'active'
+                        : ''
+                "
             >
-                <div
-                    class="collection"
-                    :class="{ active: collection.collection_id }"
-                >
-                    <caretDownIcon class="caretDown-icon" />
-                    <p>{{ collection.collection_name }}</p>
-                </div>
-                <Sections :sections="collection.sections" />
-            </Link> -->
+                <!-- collection_id: collection.collection_id, -->
+                <!-- view: collection.view_id -->
+                <caretDownIcon class="caretDown-icon" />
+                <p>{{ collection.collection_name }}</p>
+            </Link>
         </li>
     </ul>
 </template>
 
 <script setup>
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
+import { computed, reactive, watch, ref } from "vue";
 
 import caretDownIcon from "@public/svg/icons/caret-down.vue";
 import Sections from "@resource/js/Components/Sections.vue";
 
 const props = defineProps({
-    collections: Object,
+    collections: Array,
+    all_workspaces: Object,
+    collection_id: String,
 });
 
-const selectedCollection = null;
+/**************************************
+ * Fetching single Active workspace
+ *************************************/
+const active_workspaces = props.all_workspaces.filter((e) => e.active == 1);
 
-const toggle_active_collection = (index) => {
-    this.selectedCollection = index;
-};
+let workspace_id;
+let workspace_name;
+let workspace_avatar;
+for (let i in active_workspaces) {
+    workspace_id = active_workspaces[i].workspace_id;
+    workspace_name = active_workspaces[i].workspace_name;
+    workspace_avatar = active_workspaces[i].avatar;
+}
 
-// console.log(props.collections);
+/**************************************
+ * SET ACTIVE COLLECTION
+ *************************************/
 </script>
 
 <style lang="postcss" scoped>

@@ -2,29 +2,24 @@
 
 namespace App\Models;
 
-use Tuupola\Base62;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Collection extends Model
+class Section extends Model
 {
     use HasFactory;
 
     // This tells the model that your key is a type of string and not an integer (UUIDs are strings).
     protected $keyType = 'string';
-    protected $primaryKey = 'collection_id';
-
+    protected $primaryKey = 'section_id';
 
     // Override to prevent default id auto-increment assumption
     public $incrementing = false;
 
-
     /**
-     * Automatically generate a UUID for the collection_id when creating a new collection
+     * Automatically generate a UUID for the section_id when creating a new section
      */
     protected static function boot()
     {
@@ -34,7 +29,7 @@ class Collection extends Model
             if (empty($model->{$model->getKeyName()})) {
                 $uuid = (string) Str::uuid();
                 $shortUuid = self::shortenUuid($uuid);
-                $model->{$model->getKeyName()} = 'col-' . $shortUuid;
+                $model->{$model->getKeyName()} = 'sec-' . $shortUuid;
             }
         });
     }
@@ -52,30 +47,18 @@ class Collection extends Model
         return rtrim($base64Url, '='); // Remove padding
     }
 
+
     protected $fillable = [
-        'collection_id',
-        'collection_name',
-        'workspace_id'
+        'section_id',
+        'section_name',
+        'collection_id'
     ];
 
-    public function workspace(): BelongsTo
+    public function collection(): BelongsTo
     {
         return $this->belongsTo(
-            \App\Models\Workspace::class,
-            'workspace_id'
-        );
-    }
-
-    public function sections(): HasMany
-    {
-        return $this->hasMany(
-            \App\Models\Section::class,
+            \App\Models\Collection::class,
             'collection_id'
         );
-    }
-
-    public function scopeMostRecent(Builder $query): Builder
-    {
-        return $query->orderByDesc('created_at');
     }
 }

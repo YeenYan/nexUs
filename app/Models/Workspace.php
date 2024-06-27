@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Tuupola\Base62;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

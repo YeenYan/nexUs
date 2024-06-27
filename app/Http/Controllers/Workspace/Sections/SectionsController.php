@@ -1,36 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Workspace;
+namespace App\Http\Controllers\Workspace\Sections;
 
-use Inertia\Response;
-use App\Models\Workspace;
+use App\Models\Collection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Services\WorkspaceService;
 
-class NotificationsController extends Controller
+class SectionsController extends Controller
 {
-    protected $workspaceService;
-
-    public function __construct(WorkspaceService $workspaceService)
-    {
-        $this->workspaceService = $workspaceService;
-    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Workspace $workspace): Response
-    {
-        $data = $this->workspaceService->getWorkspaceData($workspace);
-
-        return inertia(
-            "Workspace/Notifications/Index",
-            $data
-        );
-    }
+    // public function index()
+    // {
+    //     //
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -48,10 +34,10 @@ class NotificationsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    // public function store(Request $request)
-    // {
-    //     //
-    // }
+    public function store(Request $request, Collection $collection)
+    {
+        dd(Collection::all());
+    }
 
     /**
      * Display the specified resource.

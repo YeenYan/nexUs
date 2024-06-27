@@ -129,7 +129,8 @@ module.exports = {
                     900: "#701a75",
                 },
                 shades: {
-                    white: "#F8F8F8",
+                    // white: "#F8F8F8",
+                    white: "#FFFFFF",
                     black: "#322E2E",
                 },
             },

@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use App\Models\Workspace;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Call the parent boot method
+        parent::boot();
+
+        // Explicit model binding
+        // Route::model('workspace', Workspace::class);
+
         $this->configureRateLimiting();
 
         $this->routes(function () {
