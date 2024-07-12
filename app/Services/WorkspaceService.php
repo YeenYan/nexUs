@@ -39,21 +39,16 @@ class WorkspaceService
     return $collections;
   }
 
-  public function getSpecificCollections($collectionId)
+
+  public function getAllSections($collection_id)
   {
-    // Assuming you are looking for a specific workspace with an ID of 1
-    $workspaceId = $this->getActiveWorkspace()->workspace_id;
-    $workspace = Workspace::findOrFail($workspaceId);
 
-    // Get all collections for the workspace
-    // $collections = $workspace->collections;
+    $collection = Collection::findOrFail($collection_id);
 
-    // // If you want to get all collection names
-    // $collection_id = $collections->pluck('collection_id');
-    // Retrieve the specific collection by ID
-    $collection_id = $workspace->collections()->where('collection_id', $collectionId)->firstOrFail();
+    // Get all collections for the workspace by descending order
+    $sections = $collection->sections()->mostRecent()->get();
 
-    return $collection_id;
+    return $sections;
   }
 
   public function redirectToActiveWorkspace()
@@ -91,7 +86,6 @@ class WorkspaceService
         'all_workspaces' => Auth::user()->workspaces,
         'avatar' => Auth::user()->avatar,
         'all_collections' => $all_collections,
-
       ];
   }
 }

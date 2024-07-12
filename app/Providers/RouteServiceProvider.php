@@ -32,6 +32,7 @@ class RouteServiceProvider extends ServiceProvider
 
         // Explicit model binding
         // Route::model('workspace', Workspace::class);
+        // Route::model('section', \App\Models\Section::class);
 
         $this->configureRateLimiting();
 

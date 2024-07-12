@@ -24,6 +24,26 @@
                 <caretDownIcon class="caretDown-icon" />
                 <p>{{ collection.collection_name }}</p>
             </Link>
+
+            <!-- NESTED SECTIONS -->
+            <ul
+                class="section-list__container"
+                v-if="props.collection_id === collection.collection_id"
+            >
+                <li
+                    class="section-list__wrapper"
+                    v-for="section in current_sections"
+                    :key="section.section_id"
+                >
+                    <div class="section-line__wrapper">
+                        <div class="vertical-line"></div>
+                        <div class="horizontal-line"></div>
+                    </div>
+                    <p>
+                        {{ section.section_name }}
+                    </p>
+                </li>
+            </ul>
         </li>
     </ul>
 </template>
@@ -32,6 +52,8 @@
 import { Link, router } from "@inertiajs/vue3";
 import { computed, reactive, watch, ref } from "vue";
 
+import { useStore } from "vuex";
+
 import caretDownIcon from "@public/svg/icons/caret-down.vue";
 import Sections from "@resource/js/Components/Sections.vue";
 
@@ -39,6 +61,16 @@ const props = defineProps({
     collections: Array,
     all_workspaces: Object,
     collection_id: String,
+});
+
+/*****************************************
+ * FETCHING SECTION OBJECT IN VUE STORE **
+ ****************************************/
+const store = useStore();
+let current_sections = ref(store.state.sections);
+
+watch(store.state.sections, (newValue, oldValue) => {
+    current_sections.value = newValue[0];
 });
 
 /**************************************
@@ -54,15 +86,15 @@ for (let i in active_workspaces) {
     workspace_name = active_workspaces[i].workspace_name;
     workspace_avatar = active_workspaces[i].avatar;
 }
-
-/**************************************
- * SET ACTIVE COLLECTION
- *************************************/
 </script>
 
 <style lang="postcss" scoped>
 .active {
     @apply bg-blue-100;
+}
+
+.active > .caretDown-icon {
+    @apply rotate-0 !important;
 }
 
 .active > .icon {
@@ -91,7 +123,7 @@ for (let i in active_workspaces) {
 
 .collection {
     @apply flex gap-5 w-full pl-[1rem] py-[.7rem] hover:bg-blue-100 rounded cursor-pointer;
-    transition: 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 .collection > p {
@@ -100,5 +132,37 @@ for (let i in active_workspaces) {
 
 .collection .caretDown-icon {
     @apply -rotate-90;
+}
+
+/***************************************************
+***************** NESTED SECTIONS ******************
+***************************************************/
+.section-list__container {
+    @apply grid;
+}
+
+.section-list__wrapper {
+    @apply relative flex items-center;
+}
+
+.section-list__wrapper > p {
+    @apply text-xs text-neutral-600 font-medium ml-[3.3rem] px-[.5rem] py-[.6rem] w-full rounded cursor-pointer hover:bg-blue-50;
+    transition: all 0.3s ease-in-out;
+}
+
+.section-line__wrapper {
+    @apply absolute left-0 h-full pl-[1.3rem];
+}
+
+.vertical-line {
+    @apply w-[.3px] h-full bg-neutral-400;
+}
+
+.horizontal-line {
+    @apply absolute top-[50%] w-[2rem] h-[.3px] bg-neutral-400;
+}
+
+.section-list__wrapper:last-child > .section-line__wrapper > .vertical-line {
+    @apply h-[50%];
 }
 </style>

@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers\Workspace\Sections;
 
+use App\Models\Section;
 use App\Models\Collection;
 use Illuminate\Http\Request;
+use App\Services\WorkspaceService;
 use App\Http\Controllers\Controller;
 
 class SectionsController extends Controller
 {
+    protected $workspaceService;
+
+    public function __construct(WorkspaceService $workspaceService)
+    {
+        $this->workspaceService = $workspaceService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -36,7 +44,31 @@ class SectionsController extends Controller
      */
     public function store(Request $request, Collection $collection)
     {
-        dd(Collection::all());
+        $current_collection_id = $request->collection_id;
+
+        // Validate the request data
+        $validateData = $request->validate(
+            [
+                'section_name' => 'required|min:4'
+            ]
+        );
+
+        // Add the current collection_id to the validated data
+        $validateData['collection_id'] = $current_collection_id;
+
+        // Create the new Section
+        $newCollection = Section::create($validateData);
+
+        // Get the ID of the newly created section
+        $newSectionID = $newCollection->section_id;
+
+        // This is for the Vue Store to update the Current Sections Objects
+        $all_collections = $this->workspaceService->getAllSections($current_collection_id);
+
+        return response()->json([
+            'current_all_sections' => $all_collections,
+            // 'redirect_url' => $redirectUrl,
+        ], 200);
     }
 
     /**
@@ -68,10 +100,30 @@ class SectionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function update(Request $request, $id)
-    // {
-    //     //
-    // }
+    public function update(
+        Request $request,
+        $workspace,
+        $collection_id,
+        $section
+    ) {
+        try {
+            $section = Section::findOrFail($section);
+
+            $validatedData = $request->validate([
+                'section_name' => 'required|string|max:255',
+            ]);
+
+            $section->update($validatedData);
+
+            $all_sections = $this->workspaceService->getAllSections($collection_id);
+
+            return response()->json([
+                'current_all_sections' => $all_sections,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update section'], 500);
+        }
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -79,8 +131,31 @@ class SectionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function destroy($id)
-    // {
-    //     //
-    // }
+    public function destroy(
+        Request $request,
+        $workspace,
+        $collection_id,
+        $section_id
+    ) {
+        //
+        $section = Section::find($section_id);
+
+        // Check if the resource exists
+        if ($section) {
+            // Delete the resource
+            $section->delete();
+
+            $all_sections = $this->workspaceService->getAllSections($collection_id);
+
+            return response()->json([
+                'current_all_sections' => $all_sections,
+            ], 200);
+
+            // Return a success response
+            // return response()->json(['message' => 'Resource deleted successfully'], 200);
+        } else {
+            // Return an error response if the resource was not found
+            return response()->json(['message' => 'Resource not found'], 404);
+        }
+    }
 }

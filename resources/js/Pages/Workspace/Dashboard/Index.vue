@@ -8,7 +8,6 @@
         <div class="breadcrumbs-header">
             <p>Dashboard</p>
         </div>
-        <!-- <p>{{ all_collections }}</p> -->
     </Workspace>
 </template>
 

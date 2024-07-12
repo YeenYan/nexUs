@@ -37,6 +37,10 @@ class Collection extends Model
                 $model->{$model->getKeyName()} = 'col-' . $shortUuid;
             }
         });
+
+        static::deleting(function ($collection) {
+            $collection->sections()->delete();
+        });
     }
 
     /**

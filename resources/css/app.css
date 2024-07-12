@@ -85,6 +85,10 @@
     @apply text-shades-white bg-blue-500 hover:bg-blue-600;
 }
 
+.btn-red {
+    @apply text-shades-white bg-red-500 hover:bg-red-600;
+}
+
 .btn-ghost {
     @apply text-neutral-600 bg-neutral-50 outline-none border-[.3px] border-neutral-300 hover:bg-neutral-100;
 }
@@ -121,6 +125,17 @@
 
 .input-error_label {
     @apply text-xs italic text-red-500 mt-[.2rem];
+}
+
+/******************************************************
+************** INPUTS FOR UPDATING ********************
+******************************************************/
+.input__update {
+    @apply text-sm text-neutral-700 bg-shades-white outline-0 w-full;
+}
+
+.input-close_icon {
+    @apply text-center text-sm text-neutral-400 px-[.4rem] py-[.01rem] bg-neutral-200 rounded-full cursor-pointer;
 }
 
 /*****************************************************/
@@ -185,3 +200,9 @@
 }
 
 /*****************************************************/
+/******************************************************
+************************ MODALS ***********************
+******************************************************/
+.blanket__wrapper {
+    @apply fixed inset-0 bg-neutral-900 z-[-1];
+}

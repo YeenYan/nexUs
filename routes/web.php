@@ -59,37 +59,41 @@ Route::prefix('{workspace}')
   ->middleware(['auth'])
   ->group(
     function () {
+      // Dashboard routes
       Route::resource('dashboard', DashboardController::class)
         ->only(['index']);
+
+      // Notifications routes
       Route::resource('notifications', NotificationsController::class)
         ->only(['index']);
+
+      // Members routes
       Route::resource('members', MembersController::class)
         ->only(['index']);
-      Route::get('{collection_id}', [CollectionsController::class, 'index'])->name('collections.index');
-      Route::resource('collections', CollectionsController::class)
-        ->only(['store']);
 
+      // Collection index route
+      Route::get('{collection_id}', [CollectionsController::class, 'index'])->name('collections.index');
+
+      // Collection update route
+      Route::put('{collection_id}', [CollectionsController::class, 'update'])->name('collections.update');
+
+      // Collection resource routes
+      Route::resource('collections', CollectionsController::class)
+        ->only(['store', 'destroy']);
+
+      // Nested routes under a collection_id
       Route::prefix('{collection_id}')
         ->name('collection.')
         ->group(function () {
-          Route::resource('sections', SectionsController::class)->only(['store']);
+
+          // Section resource routes (store and update)
+          Route::resource('sections', SectionsController::class)->only(['store', 'update', 'destroy']);
+
+          // Section update route
+          // Route::put('{section_id}', [SectionsController::class, 'update'])->name('sections.update');
         });
     }
   );
-// Route::prefix('{collection_id}')
-//   ->name('collection.')
-//   ->group(
-//     function () {
-//       Route::resource('sections', SectionsController::class)
-//         ->only(['store']);
-//     }
-//   );
-
-
-
-
-
-
 
 
 /*************************************

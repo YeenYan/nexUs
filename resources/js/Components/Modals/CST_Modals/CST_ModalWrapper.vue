@@ -47,12 +47,7 @@ const close_modal = () => {
 
 <style lang="postcss" scoped>
 .CST-modal__container {
-    @apply absolute top-0 flex items-center justify-center w-full h-full z-[6];
-}
-
-.blanket__wrapper {
-    @apply fixed inset-0 bg-neutral-900 z-[-1];
-    /* opacity-70 */
+    @apply absolute top-0 flex items-center justify-center w-full h-full z-[10];
 }
 
 .CST-modal__wrapper {

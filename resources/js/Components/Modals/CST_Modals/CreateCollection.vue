@@ -22,7 +22,7 @@
                     </p>
                 </div>
                 <p class="input-error_label" v-if="form.errors.collection_name">
-                    {{ form.errors.collection_name }}
+                    {{ form.errors.collection_name[0] }}
                 </p>
             </div>
         </template>
@@ -37,12 +37,12 @@
 <script setup>
 import ModalWrapper from "./CST_ModalWrapper.vue";
 import { Link, useForm } from "@inertiajs/vue3";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { useStore } from "vuex";
+import axios from "axios";
 
 const props = defineProps({
     workspace_id: String,
-    // collections: Array,
 });
 
 const form = useForm({
@@ -58,12 +58,35 @@ const close_modal = () => {
     store.commit("setCSTContainerisClose", false);
 };
 
-const create_collection = () => {
-    form.post(
-        route("workspace.collections.store", {
-            workspace: props.workspace_id,
-        })
-    );
-    close_modal();
+const create_collection = async () => {
+    try {
+        const response = await axios.post(
+            route("workspace.collections.store", {
+                workspace: props.workspace_id,
+            }),
+            // `form` contains the data to submit
+            form
+        );
+
+        if (response.status == 200) {
+            form.errors = "";
+            store.commit("addCollection", response.data.current_collections);
+            close_modal();
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 422) {
+            // form.errors = error.response.data.errors;
+            if (error.response.data.errors.hasOwnProperty("collection_name")) {
+                form.errors = error.response.data.errors;
+            }
+            // Handle errors in your form or display them to the user
+        } else if (error.response) {
+            // Other server errors (handle as needed)
+            console.error("Server error:", error.response.data.message);
+        } else {
+            // Network or client-side errors
+            console.error("Error creating collection:", error.message);
+        }
+    }
 };
 </script>

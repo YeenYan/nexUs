@@ -7,10 +7,7 @@ use App\Models\Workspace;
 use App\Models\Collection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Services\WorkspaceService;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Redirect;
 
 class CollectionsController extends Controller
 {
@@ -21,26 +18,28 @@ class CollectionsController extends Controller
         $this->workspaceService = $workspaceService;
     }
 
-    // public function __construct()
-    // {
-
-    // }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Workspace $workspace, Request $request): Response
-    {
+    public function index(
+        Workspace $workspace,
+        Request $request,
+    ): Response {
+
         $data = $this->workspaceService->getWorkspaceData($workspace);
 
-        // dd($request->view);
+        $sections = $this->workspaceService->getAllSections($request->collection_id);
 
         return inertia(
             'Workspace/Collections/Index',
             array_merge(
                 $data,
-                ['collection_id' => $request->collection_id]
+                [
+                    'collection_id' => $request->collection_id,
+                    'all_current_sections' => $sections
+                ]
             )
         );
     }
@@ -68,6 +67,8 @@ class CollectionsController extends Controller
         // Get the current active workspace ID
         $current_workspace_id = $this->workspaceService->getActiveWorkspace()->workspace_id;
 
+        // dd($all_collections);
+
         // Validate the request data
         $validateData = $request->validate(
             [
@@ -81,16 +82,18 @@ class CollectionsController extends Controller
         // Create the new collection
         $newCollection = Collection::create($validateData);
 
+
         // Get the ID of the newly created collection
         $newCollectionID = $newCollection->collection_id;
 
-        // Retrieve the workspace data (this line seems unused, consider removing it if not needed)
-        $data = $this->workspaceService->getWorkspaceData($workspace);
+        // This is for the Vue Store to update the Current Collections Objects
+        $all_collections = $this->workspaceService->getAllCollections();
 
-        return redirect()->route('workspace.collections.index', [
-            'workspace' => $current_workspace_id,
-            'collection_id' => $newCollectionID,
-        ]);
+        // Return a JSON response with the newly created collection
+        return response()->json([
+            'current_collections' => $all_collections,
+            // 'redirect_url' => $redirectUrl,
+        ], 200);
     }
 
     /**
@@ -99,34 +102,26 @@ class CollectionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Workspace $workspace, $collection_id): Response
-    {
-        // dd($this->workspaceService->getSpecificCollections($id));
-        // dd($workspace->collections()->where('collection_id', $id));
-        // dd($workspace->collections());
+    // public function show(Workspace $workspace, $collection_id, Request $request): Response
+    // {
 
-        // $workspaceId = 'wp-6ihDCGzeT32OXvCmmgX2Zw';
-        // $workspace = Workspace::find($workspaceId);
-        // $collections = $workspace->collections()->where('collection_id', $id)->get();
-        // // Extract the collection names
-        // $collectionNames = $collections->pluck('collection_name');
+    //     $data = $this->workspaceService->getWorkspaceData($workspace);
+    //     $sections = $this->workspaceService->getAllSections($request->collection_id);
 
-        // // Display the collection names
-        // dd($collections);
-
-        $data = $this->workspaceService->getWorkspaceData($workspace);
-
-        return inertia(
-            'Workspace/Collections/Show',
-            array_merge(
-                $data,
-                ['collection_id' => $collection_id],
-                // [
-                //     'all_collections' => $col
-                // ]
-            )
-        );
-    }
+    //     return inertia(
+    //         'Workspace/Collections/Show',
+    //         array_merge(
+    //             $data,
+    //             [
+    //                 'collection_id' => $collection_id,
+    //                 'all_current_sections' => $sections
+    //             ],
+    //             // [
+    //             //     'all_collections' => $col
+    //             // ]
+    //         )
+    //     );
+    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -146,10 +141,23 @@ class CollectionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function update(Request $request, $id)
-    // {
-    //     //
-    // }
+    public function update(Request $request, $workspace, $collection_id)
+    {
+        try {
+            $collection = Collection::findOrFail($collection_id);
+
+            $validatedData = $request->validate([
+                'collection_name' => 'required|string|max:255',
+                // Add other fields as necessary
+            ]);
+
+            $collection->update($validatedData);
+        } catch (\Exception $e) {
+
+            // Return an appropriate error response
+            return response()->json(['error' => 'Failed to update collection'], 500);
+        }
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -157,8 +165,79 @@ class CollectionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function destroy($id)
+    public function destroy(Request $request, $workspace, $collection_id)
+    {
+        $collection = Collection::findOrFail($collection_id);
+
+        if ($collection) {
+            // Delete the resource
+            $collection->delete();
+
+            // This is for the Vue Store to update the Current Collections Objects
+            $all_collections = $this->workspaceService->getAllCollections();
+
+            // dd($all_collections);
+
+            // Return a JSON response with the newly created collection
+            return response()->json([
+                'current_collections' => $all_collections,
+            ], 200);
+        } else {
+            // Return an error response if the resource was not found
+            return response()->json(['message' => 'Resource not found'], 404);
+        }
+    }
+
+    // public function destroy(Request $request, $workspace_id, $collection_id)
     // {
-    //     //
+    //     // Find the current collection and delete it
+    //     $collection = Collection::where('workspace_id', $workspace_id)->where('collection_id', $collection_id)->firstOrFail();
+
+    //     if ($collection) {
+    //         $collection->delete();
+
+    //         // Get all collections in the workspace after deletion
+    //         $all_collections = Collection::where('workspace_id', $workspace_id)
+    //             ->orderBy('collection_id')
+    //             ->get();
+
+    //         // Get the next collection
+    //         $nextCollection = Collection::where('workspace_id', $workspace_id)
+    //             ->where('collection_id', '>', $collection_id)
+    //             ->orderBy('collection_id')
+    //             ->first();
+
+    //         // If no next collection found, get the first collection in the workspace
+    //         if (!$nextCollection) {
+    //             $nextCollection = Collection::where('workspace_id', $workspace_id)
+    //                 ->orderBy('collection_id')
+    //                 ->first();
+    //         }
+
+    //         // Prepare the JSON response data
+    //         $response = [
+    //             'current_collections' => $all_collections,
+    //         ];
+
+    //         // If a next collection is found, redirect to it and include the JSON response data
+    //         if ($nextCollection) {
+    //             return response()->json(array_merge($response, [
+    //                 'redirect_url' => route('collections.show', [
+    //                     'workspace' => $workspace_id,
+    //                     'collection' => $nextCollection->collection_id,
+    //                 ])
+    //             ]), 200);
+    //         } else {
+    //             // Handle the case where no collections are found
+    //             return response()->json(array_merge($response, [
+    //                 'redirect_url' => route('workspace.dashboard.index', [
+    //                     'workspace' => $workspace_id,
+    //                 ])
+    //             ]), 200);
+    //         }
+    //     } else {
+    //         // Handle the case where the collection was not found
+    //         return response()->json(['message' => 'Collection not found'], 404);
+    //     }
     // }
 }

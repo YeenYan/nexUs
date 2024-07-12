@@ -175,8 +175,9 @@
                             @click.prevent="toggle_collection_modal"
                         />
                     </div>
+                    <!-- :collections="props.all_collections" -->
                     <Collections
-                        :collections="props.all_collections"
+                        :collections="all_current_collections"
                         :all_workspaces="props.all_workspaces"
                         :collection_id="props.collection_id"
                         class="collection-content__wrapper"
@@ -198,6 +199,7 @@
             class="collection-modal__wrapper"
             v-if="CST_container_is_active"
             :workspace_id="workspace_id"
+            :collection_id="props.collection_id"
         />
         <!-- :collections="props.all_collections" -->
 
@@ -287,6 +289,15 @@ const props = defineProps({
 });
 
 const page = usePage();
+const store = useStore();
+
+/**************************************
+ * STORING COLLECTION OBJECT IN VUE STORE
+ *************************************/
+let all_current_collections = props.all_collections;
+watch(store.state.collections, (newValue, oldValue) => {
+    all_current_collections = newValue[0];
+});
 
 /**************************************
  * Using Global Environment Variable
@@ -362,7 +373,6 @@ let toggle_user_profile_nav = () => {
 /*****************************************
  ******* TOGGLING COLLECTION MODAL *******
  ****************************************/
-const store = useStore();
 const CST_container_is_active = computed(
     () => store.state.active_CST_container
 );
@@ -659,6 +669,6 @@ const toggle_collection_modal = () => {
 ********************* SECTION **********************
 ***************************************************/
 .workspace-section__wrapper {
-    @apply w-full;
+    @apply relative w-full h-full;
 }
 </style>
