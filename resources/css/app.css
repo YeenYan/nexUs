@@ -45,6 +45,80 @@
     transition: 0.1s ease-in-out;
 }
 
+/* FOR COLLECTION/SECTIONS/TASK CARD CONTAINER STYLE */
+.col-wrapper {
+    @apply bg-shades-white rounded-lg p-[1.25rem] drop-shadow-sm;
+}
+
+.col-header__wrapper {
+    @apply mb-[1.5rem];
+}
+
+.col-header-text {
+    @apply text-sm text-neutral-700 font-medium;
+}
+
+/* FOR TASK / ACTIVITIES AVATAR STYLE */
+.assignee-avatar__wrapper {
+    @apply flex gap-[.1rem];
+}
+
+.assignee-avatar__wrapper > li {
+    @apply h-[1.5rem] rounded-full overflow-hidden max-w-[1.5rem] cursor-pointer;
+}
+
+.assignee-avatar__wrapper > li > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* PRIORITY STYLE */
+.priority__wrapper {
+    @apply flex items-center justify-center;
+}
+
+.priority__wrapper > div {
+    @apply w-[.9rem] h-[.9rem] bg-neutral-300 rounded-full cursor-pointer;
+}
+
+.priority__wrapper > .urgent {
+    @apply bg-red-500;
+}
+
+.priority__wrapper > .high {
+    @apply bg-orange-500;
+}
+
+.priority__wrapper > .normal {
+    @apply bg-blue-500;
+}
+
+.priority__wrapper > .low {
+    @apply bg-tertiary-500;
+}
+
+.priority__wrapper > .default {
+    @apply bg-neutral-300;
+}
+
+.priority-error__wrapper {
+    @apply border-red-500;
+}
+
+/* STARRED STYLE */
+.starred-icon > .icon {
+    @apply fill-neutral-300;
+}
+
+.starred-icon > .is_starred {
+    @apply fill-yellow-500;
+}
+
+.starred-icon > .not_starred {
+    @apply fill-neutral-300;
+}
+
 /*****************************************************/
 
 /******************************************************
@@ -127,6 +201,12 @@
     @apply text-xs italic text-red-500 mt-[.2rem];
 }
 
+/* SEARCH INPUT FIELD */
+
+.search-input__wrapper > input {
+    @apply text-sm py-[.3rem] px-[.6rem] mb-[.6rem] w-full max-w-[17rem] outline-0 border-[.3px] rounded;
+}
+
 /******************************************************
 ************** INPUTS FOR UPDATING ********************
 ******************************************************/
@@ -199,10 +279,71 @@
     @apply max-w-[.8rem] fill-neutral-600;
 }
 
+.status-icon {
+    @apply px-[.2rem] py-[.15rem] w-[.9rem] h-[.9rem] fill-shades-white  rounded-full;
+}
+/*  */
+
+.status-icon.complete {
+    @apply bg-green-700;
+}
+
+.status-icon.inProgress {
+    @apply bg-blue-700;
+}
+
+.status-icon.toDo {
+    @apply bg-tertiary-700;
+}
+
 /*****************************************************/
+
 /******************************************************
 ************************ MODALS ***********************
 ******************************************************/
 .blanket__wrapper {
     @apply fixed inset-0 bg-neutral-900 z-[-1];
+}
+
+/*****************************************************/
+
+/******************************************************
+******************** STATUS STYLES ********************
+******************************************************/
+.status__wrapper {
+    @apply flex gap-2 items-center w-fit px-[.5rem] py-[.2rem] rounded-full;
+}
+
+.status__wrapper.complete {
+    @apply bg-green-500;
+}
+
+.status__wrapper.inProgress {
+    @apply bg-blue-500;
+}
+
+.status__wrapper.toDo {
+    @apply bg-tertiary-500;
+}
+
+.status__wrapper > p {
+    @apply text-xs text-shades-white;
+}
+
+/*****************************************************/
+
+/******************************************************
+************************ SCROLL ***********************
+******************************************************/
+
+.scroll-style::-webkit-scrollbar {
+    @apply h-[.4rem] w-[.4rem];
+}
+
+.scroll-style::-webkit-scrollbar-track {
+    @apply bg-neutral-100 rounded-full;
+}
+
+.scroll-style::-webkit-scrollbar-thumb {
+    @apply bg-neutral-300 rounded-full;
 }

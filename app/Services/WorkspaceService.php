@@ -80,10 +80,12 @@ class WorkspaceService
   public function getWorkspaceData($workspace)
   {
     $all_collections = $this->getAllCollections();
+    $workspace_id = $this->getActiveWorkspace()->workspace_id;
 
     return
       [
         'all_workspaces' => Auth::user()->workspaces,
+        'workspace_id' => $workspace_id,
         'avatar' => Auth::user()->avatar,
         'all_collections' => $all_collections,
       ];

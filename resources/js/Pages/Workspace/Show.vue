@@ -179,6 +179,7 @@
                     <Collections
                         :collections="all_current_collections"
                         :all_workspaces="props.all_workspaces"
+                        :workspace_id="workspace_id"
                         :collection_id="props.collection_id"
                         class="collection-content__wrapper"
                     />
@@ -283,6 +284,7 @@ const props = defineProps({
     members_active: Boolean,
     notifications_active: Boolean,
     all_workspaces: Array,
+    workspace_id: String,
     avatar: String,
     all_collections: Object,
     collection_id: String,

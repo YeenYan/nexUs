@@ -15,6 +15,7 @@ use App\Http\Controllers\Workspace\{
 
 use App\Http\Controllers\Workspace\Collections\CollectionsController;
 use App\Http\Controllers\Workspace\Sections\SectionsController;
+use App\Http\Controllers\Workspace\Tasks\TaskController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -89,11 +90,28 @@ Route::prefix('{workspace}')
           // Section resource routes (store and update)
           Route::resource('sections', SectionsController::class)->only(['store', 'update', 'destroy']);
 
-          // Section update route
-          // Route::put('{section_id}', [SectionsController::class, 'update'])->name('sections.update');
+          // Specific Section Route
+          Route::get('{section_id}', [SectionsController::class, 'show'])
+            ->name('sections.show');
+
+          /*================================================================
+          =========================== TASK ROUTES ==========================
+          ================================================================*/
+          Route::prefix('{section_id}')
+            ->name('section.')
+            ->group(function () {
+
+              Route::resource('task', TaskController::class)
+                ->only(['store']);
+            });
         });
     }
   );
+
+// // Section resource routes (store and update)
+// Route::resource('task', TaskController::class)
+//   ->middleware('auth')
+//   ->only(['store']);
 
 
 /*************************************

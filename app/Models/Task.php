@@ -7,15 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Section extends Model
+class Task extends Model
 {
     use HasFactory;
 
     // This tells the model that your key is a type of string and not an integer (UUIDs are strings).
     protected $keyType = 'string';
-    protected $primaryKey = 'section_id';
+    protected $primaryKey = 'task_id';
 
     // Override to prevent default id auto-increment assumption
     public $incrementing = false;
@@ -31,10 +30,11 @@ class Section extends Model
             if (empty($model->{$model->getKeyName()})) {
                 $uuid = (string) Str::uuid();
                 $shortUuid = self::shortenUuid($uuid);
-                $model->{$model->getKeyName()} = 'sec-' . $shortUuid;
+                $model->{$model->getKeyName()} = 'task-' . $shortUuid;
             }
         });
     }
+
 
     /**
      * This will shorten the generated UUID and used above
@@ -51,23 +51,18 @@ class Section extends Model
 
 
     protected $fillable = [
-        'section_id',
-        'section_name',
-        'collection_id'
+        'task_id',
+        'task_name',
+        'priority_type',
+        'starred',
+        'section_id'
     ];
 
-    public function collection(): BelongsTo
+
+    public function section(): BelongsTo
     {
         return $this->belongsTo(
-            \App\Models\Collection::class,
-            'collection_id'
-        );
-    }
-
-    public function tasks(): HasMany
-    {
-        return $this->hasMany(
-            \App\Models\Task::class,
+            \App\Models\Section::class,
             'section_id'
         );
     }

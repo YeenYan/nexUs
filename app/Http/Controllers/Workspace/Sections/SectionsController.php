@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers\Workspace\Sections;
 
+use Inertia\Response;
 use App\Models\Section;
+use App\Models\Workspace;
 use App\Models\Collection;
 use Illuminate\Http\Request;
-use App\Services\WorkspaceService;
+use App\Services\{WorkspaceService, SectionService};
 use App\Http\Controllers\Controller;
 
 class SectionsController extends Controller
 {
     protected $workspaceService;
+    protected $sectionService;
 
-    public function __construct(WorkspaceService $workspaceService)
+    public function __construct(WorkspaceService $workspaceService, SectionService $sectionService)
     {
         $this->workspaceService = $workspaceService;
+        $this->sectionService = $sectionService;
     }
     /**
      * Display a listing of the resource.
@@ -77,10 +81,33 @@ class SectionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function show($id)
-    // {
-    //     //
-    // }
+    public function show(
+        Workspace $workspace,
+        Request $request,
+    ): Response {
+
+        $data = $this->workspaceService->getWorkspaceData($workspace);
+
+        $all_sections = $this->workspaceService->getAllSections($request->collection_id);
+
+        // Retrieving Section Information
+        $section = $this->sectionService->getSectionData($request->section_id);
+
+        // Retrieving current Tasks list
+        $tasks_list = $this->sectionService->getTasksList($request->section_id);
+
+        // dd($section);
+
+        return inertia('Workspace/Collections/Sections/Show', array_merge(
+            $data,
+            [
+                'collection_id' => $request->collection_id,
+                'all_current_sections' => $all_sections,
+                'section_data' => $section,
+                'tasks_list' => $tasks_list
+            ]
+        ));
+    }
 
     /**
      * Show the form for editing the specified resource.

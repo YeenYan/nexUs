@@ -9,6 +9,11 @@
             :workspace_id="props.workspace_id"
             :collection_id="props.collection_id"
         />
+        <CreateTask
+            v-if="show_add_task_modal"
+            :workspace_id="props.workspace_id"
+            :collection_id="props.collection_id"
+        />
         <DeleteCollection
             v-if="show_delete_collection_modal"
             :workspace_id="props.workspace_id"
@@ -29,6 +34,7 @@ import { useStore } from "vuex";
 
 import CreateCollection from "@resource/js/Components/Modals/CST_Modals/CreateCollection.vue";
 import CreateSection from "@resource/js/Components/Modals/CST_Modals/CreateSection.vue";
+import CreateTask from "@resource/js/Components/Modals/CST_Modals/CreateTask.vue";
 import DeleteCollection from "@resource/js/Components/Modals/CST_Modals/DeleteCollection.vue";
 import DeleteSection from "@resource/js/Components/Modals/CST_Modals/DeleteSection.vue";
 
@@ -48,6 +54,8 @@ const show_add_collection_modal = computed(
 const show_add_section_modal = computed(
     () => store.state.active_add_section_modal
 );
+
+const show_add_task_modal = computed(() => store.state.active_add_task_modal);
 
 const show_delete_collection_modal = computed(
     () => store.state.active_delete_collection_modal

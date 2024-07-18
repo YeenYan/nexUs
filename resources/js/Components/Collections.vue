@@ -7,12 +7,7 @@
         >
             <Link
                 class="collection"
-                :href="
-                    route('workspace.collections.index', {
-                        workspace: workspace_id,
-                        collection_id: collection.collection_id,
-                    })
-                "
+                :href="generateCollectionLink(collection.collection_id)"
                 :class="
                     props.collection_id === collection.collection_id
                         ? 'active'
@@ -35,13 +30,15 @@
                     v-for="section in current_sections"
                     :key="section.section_id"
                 >
-                    <div class="section-line__wrapper">
-                        <div class="vertical-line"></div>
-                        <div class="horizontal-line"></div>
-                    </div>
-                    <p>
-                        {{ section.section_name }}
-                    </p>
+                    <Link :href="generateSectionLink(section.section_id)">
+                        <div class="section-line__wrapper">
+                            <div class="vertical-line"></div>
+                            <div class="horizontal-line"></div>
+                        </div>
+                        <p>
+                            {{ section.section_name }}
+                        </p>
+                    </Link>
                 </li>
             </ul>
         </li>
@@ -49,8 +46,8 @@
 </template>
 
 <script setup>
-import { Link, router } from "@inertiajs/vue3";
 import { computed, reactive, watch, ref } from "vue";
+import { Link } from "@inertiajs/vue3";
 
 import { useStore } from "vuex";
 
@@ -60,13 +57,41 @@ import Sections from "@resource/js/Components/Sections.vue";
 const props = defineProps({
     collections: Array,
     all_workspaces: Object,
+    workspace_id: String,
     collection_id: String,
+    all_current_sections: Object,
 });
+
+const store = useStore();
+
+/*****************************************
+ **** COLLECTION NAVIGATION METHOD *******
+ ****************************************/
+
+const generateCollectionLink = (collectionId) => {
+    const url = route("workspace.collections.index", {
+        workspace: props.workspace_id,
+        collection_id: collectionId,
+    });
+    return url;
+};
+
+/*****************************************
+ ******* SECTION NAVIGATION METHOD *******
+ ****************************************/
+
+const generateSectionLink = (sectionId) => {
+    const url = route("workspace.collection.sections.show", {
+        workspace: props.workspace_id,
+        collection_id: props.collection_id,
+        section_id: sectionId,
+    });
+    return url;
+};
 
 /*****************************************
  * FETCHING SECTION OBJECT IN VUE STORE **
  ****************************************/
-const store = useStore();
 let current_sections = ref(store.state.sections);
 
 watch(store.state.sections, (newValue, oldValue) => {
@@ -141,11 +166,11 @@ for (let i in active_workspaces) {
     @apply grid;
 }
 
-.section-list__wrapper {
+.section-list__wrapper > a {
     @apply relative flex items-center;
 }
 
-.section-list__wrapper > p {
+.section-list__wrapper > a > p {
     @apply text-xs text-neutral-600 font-medium ml-[3.3rem] px-[.5rem] py-[.6rem] w-full rounded cursor-pointer hover:bg-blue-50;
     transition: all 0.3s ease-in-out;
 }
@@ -162,7 +187,10 @@ for (let i in active_workspaces) {
     @apply absolute top-[50%] w-[2rem] h-[.3px] bg-neutral-400;
 }
 
-.section-list__wrapper:last-child > .section-line__wrapper > .vertical-line {
+.section-list__wrapper:last-child
+    > a
+    > .section-line__wrapper
+    > .vertical-line {
     @apply h-[50%];
 }
 </style>

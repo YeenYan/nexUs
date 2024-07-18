@@ -40,86 +40,100 @@
                         :key="section.section_id"
                         class="section-lists__wrapper"
                     >
-                        <div class="section-list-name">
-                            <folderIcon class="icon" />
-                            <p>
-                                {{ section.section_name }}
-                            </p>
-                            <div
-                                class="input__box input-sectionName__wrapper"
-                                v-if="section.section_id == update_sectionID"
-                            >
-                                <input
-                                    v-model="new_sectionName"
-                                    class="input__update"
-                                    type="text"
-                                    id="update_name"
-                                />
-                                <!-- <p class="input-error_icon">!</p> -->
-                                <button
-                                    @click="update_sectionName"
-                                    class="input-sectionName__btn"
-                                    :class="{ active: active_button }"
-                                >
-                                    Update
-                                </button>
-                                <p
-                                    class="input-close_icon"
-                                    @click.prevent="update_sectionID = false"
-                                >
-                                    x
-                                </p>
-                            </div>
-                        </div>
-                        <!-- Progress bar -->
-                        <div class="section-list-progress">
-                            <div class="base">
-                                <div class="bar"></div>
-                            </div>
-                            <p>65%</p>
-                        </div>
-
-                        <ellipsisIcon
-                            class="section-list-ellipsis icon"
-                            @click.prevent="
-                                toggle_sectionDD_menu(section.section_id)
+                        <Link
+                            :href="
+                                route('workspace.collection.sections.show', {
+                                    workspace: props.workspace_id,
+                                    collection_id: collection.collection_id,
+                                    section_id: section.section_id,
+                                })
                             "
-                        />
-                        <DropdownMenu
-                            class="section-menu"
-                            v-if="section.section_id == active_section"
                         >
-                            <template #normal>
-                                <div class="normal">
-                                    <addUserIcon class="icon" />
-                                    <p>Add Member</p>
-                                </div>
+                            <div class="section-list-name">
+                                <folderIcon class="icon" />
+                                <p>
+                                    {{ section.section_name }}
+                                </p>
                                 <div
-                                    class="normal"
-                                    @click.prevent="
-                                        show_update_input(
-                                            section.section_id,
-                                            section.section_name
-                                        )
+                                    class="input__box input-sectionName__wrapper"
+                                    v-if="
+                                        section.section_id == update_sectionID
                                     "
                                 >
-                                    <editIcon class="icon" />
-                                    <p>Rename</p>
+                                    <input
+                                        v-model="new_sectionName"
+                                        class="input__update"
+                                        type="text"
+                                        id="update_name"
+                                    />
+                                    <!-- <p class="input-error_icon">!</p> -->
+                                    <button
+                                        @click="update_sectionName"
+                                        class="input-sectionName__btn"
+                                        :class="{ active: active_button }"
+                                    >
+                                        Update
+                                    </button>
+                                    <p
+                                        class="input-close_icon"
+                                        @click.prevent="
+                                            update_sectionID = false
+                                        "
+                                    >
+                                        x
+                                    </p>
                                 </div>
-                                <div
-                                    class="delete"
-                                    @click.prevent="
-                                        toggle_delete_section_modal(
-                                            section.section_id,
-                                            section.section_name
-                                        )
-                                    "
-                                >
-                                    <deleteIcon class="icon" />
-                                    <p>Delete</p>
+                            </div>
+                            <!-- Progress bar -->
+                            <div class="section-list-progress">
+                                <div class="base">
+                                    <div class="bar"></div>
                                 </div>
-                            </template>
-                        </DropdownMenu>
+                                <p>65%</p>
+                            </div>
+
+                            <ellipsisIcon
+                                class="section-list-ellipsis icon"
+                                @click.prevent="
+                                    toggle_sectionDD_menu(section.section_id)
+                                "
+                            />
+                            <DropdownMenu
+                                class="section-menu"
+                                v-if="section.section_id == active_section"
+                            >
+                                <template #normal>
+                                    <div class="normal">
+                                        <addUserIcon class="icon" />
+                                        <p>Add Member</p>
+                                    </div>
+                                    <div
+                                        class="normal"
+                                        @click.prevent="
+                                            show_update_input(
+                                                section.section_id,
+                                                section.section_name
+                                            )
+                                        "
+                                    >
+                                        <editIcon class="icon" />
+                                        <p>Rename</p>
+                                    </div>
+                                    <div
+                                        class="delete"
+                                        @click.prevent="
+                                            toggle_delete_section_modal(
+                                                section.section_id,
+                                                section.section_name
+                                            )
+                                        "
+                                    >
+                                        <deleteIcon class="icon" />
+                                        <p>Delete</p>
+                                    </div>
+                                </template>
+                            </DropdownMenu>
+                        </Link>
                     </li>
                 </ul>
             </div>
@@ -299,6 +313,7 @@ import deleteIcon from "@public/svg/icons/delete.vue";
 
 const props = defineProps({
     all_workspaces: Array,
+    workspace_id: String,
     avatar: String,
     all_collections: Object,
     collection_id: String,
@@ -492,17 +507,6 @@ const toggle_delete_section_modal = (id, name) => {
 /***************************************************
 ******************* SHARED STYLE *******************
 ***************************************************/
-.col-wrapper {
-    @apply bg-shades-white rounded-lg p-[1.25rem] drop-shadow-sm;
-}
-
-.col-header__wrapper {
-    @apply mb-[1.5rem];
-}
-
-.col-header-text {
-    @apply text-sm text-neutral-700 font-medium;
-}
 
 /***************************************************
 *************** PARENT COLLECTION ******************
@@ -530,7 +534,7 @@ const toggle_delete_section_modal = (id, name) => {
     @apply grid gap-4;
 }
 
-.section-lists__wrapper {
+.section-lists__wrapper > a {
     @apply relative grid items-center gap-5 border-[.3px] border-neutral-300 p-[.9rem] rounded-lg;
     grid-template-columns: 1fr 0.7fr 0.1fr;
 }
@@ -682,11 +686,7 @@ const toggle_delete_section_modal = (id, name) => {
 }
 
 .member-avatar__wrapper {
-    @apply h-[2rem] max-w-[2rem] cursor-pointer;
-}
-
-.member-avatar__wrapper {
-    @apply rounded-full overflow-hidden;
+    @apply h-[2rem] rounded-full overflow-hidden max-w-[2rem] cursor-pointer;
 }
 
 .member-avatar__wrapper > img {
