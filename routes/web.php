@@ -12,7 +12,7 @@ use App\Http\Controllers\Workspace\{
   MembersController,
   NotificationsController
 };
-
+use App\Http\Controllers\Workspace\Activity\ActivityController;
 use App\Http\Controllers\Workspace\Collections\CollectionsController;
 use App\Http\Controllers\Workspace\Sections\SectionsController;
 use App\Http\Controllers\Workspace\Tasks\TaskController;
@@ -102,16 +102,59 @@ Route::prefix('{workspace}')
             ->group(function () {
 
               Route::resource('task', TaskController::class)
-                ->only(['store']);
+                ->only(['store', 'destroy']);
+
+              Route::get('{task_id}', [TaskController::class, 'show'])
+                ->name('task.show');
+
+              // Task Route for updating Priority Type
+              Route::put('{task_id}/update_priority', [TaskController::class, 'update_priority'])
+                ->name('task.update_priority');
+
+              // Task Route for updating Starred value
+              Route::put('{task_id}/update_starred', [TaskController::class, 'update_starred'])
+                ->name('task.update_starred');
+
+              // Task Route for updating Starred value
+              Route::put('{task_id}/update_taskName', [TaskController::class, 'update_taskName'])
+                ->name('task.update_taskName');
+
+              /*================================================================
+              ======================== ACTIVITY ROUTES =========================
+              ================================================================*/
+              Route::prefix('{task_id}')
+                ->name('task.')
+                ->group(function () {
+                  Route::resource('activity', ActivityController::class)
+                    ->only(['store', 'destroy']);
+
+
+                  // Activity Route for updating Activity Name
+                  Route::put('{activity_id}/update_activity_name', [ActivityController::class, 'update_activity_name'])
+                    ->name('activity.update_activity_name');
+
+                  // Activity Route for updating Priority Type
+                  Route::put('{activity_id}/update_priority', [ActivityController::class, 'update_priority'])
+                    ->name('activity.update_priority');
+
+                  // Activity Route for updating Priority Type
+                  Route::put('{activity_id}/update_status', [ActivityController::class, 'update_status'])
+                    ->name('activity.update_status');
+
+                  // Activity Route for updating Priority Type
+                  Route::put('{activity_id}/update_due_date', [ActivityController::class, 'update_due_date'])
+                    ->name('activity.update_due_date');
+
+                  // Activity Route for updating Descrption
+                  Route::put('{activity_id}/update_description', [ActivityController::class, 'update_description'])
+                    ->name('activity.update_description');
+                });
             });
         });
     }
   );
-
-// // Section resource routes (store and update)
-// Route::resource('task', TaskController::class)
-//   ->middleware('auth')
-//   ->only(['store']);
+// Route::put('{activity_id}/update_priority', [ActivityController::class, 'update_priority'])
+//   ->name('activity.update_priority');
 
 
 /*************************************

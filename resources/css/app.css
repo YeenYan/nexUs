@@ -73,6 +73,75 @@
     object-fit: cover;
 }
 
+.add-assigneeBtn {
+    @apply bg-shades-white border-[.3px] border-neutral-300 px-[.45rem] rounded-full cursor-pointer;
+}
+
+/* FOR ACTIVITIES DUE DATES */
+.due-date__wrapper {
+    @apply relative grid items-center gap-2 w-fit overflow-hidden;
+    grid-template-columns: 1rem 1fr;
+}
+
+.due-date__wrapper > .icon {
+    @apply w-[.8rem] fill-neutral-400 z-[2];
+}
+
+[type="date"]::-webkit-calendar-picker-indicator {
+    @apply absolute w-full left-[-.2rem] bg-shades-white opacity-0;
+}
+
+[type="date"]::-webkit-calendar-picker-indicator {
+    @apply cursor-pointer;
+}
+
+/*****************************************************/
+
+/******************************************************
+**** MODAL OPTIONS FOR ADDING TASK & ACTIVITIES *******
+**** ====> PRIORITY TYPE STYLE
+**** ====> STARRED STYLE
+******************************************************/
+
+.task-option__wrapper {
+    @apply relative flex gap-2 mt-[-1rem];
+}
+
+.priority__wrapper.with-text,
+.starred__wrapper,
+.due-date__wrapper,
+.assignee__wrapper,
+.status-type__wrapper {
+    @apply border-[.3px] px-[.7rem] py-[.3rem] rounded-full cursor-pointer;
+}
+
+.priority__wrapper.with-text {
+    @apply flex gap-2;
+}
+
+.priority__wrapper.with-text > p,
+.starred__wrapper > p,
+.due-date__wrapper > p,
+.assignee__wrapper > p,
+.status-type__wrapper > p {
+    @apply text-xs text-neutral-600 text-nowrap;
+}
+
+.starred__wrapper,
+.status-type__wrapper {
+    @apply grid items-center gap-2;
+    grid-template-columns: 1rem 1fr;
+}
+
+/* TASK MENU */
+.priority-menu-parent__wrapper {
+    @apply absolute top-[-2rem] left-[4rem] w-full max-w-[11rem];
+}
+
+.priority-error {
+    @apply absolute top-[1.6rem];
+}
+
 /* PRIORITY STYLE */
 .priority__wrapper {
     @apply flex items-center justify-center;
@@ -104,6 +173,44 @@
 
 .priority-error__wrapper {
     @apply border-red-500;
+}
+
+/* PRIORITY MENU DROPDOWN */
+.priority-menu__container {
+    @apply bg-shades-white w-full py-[.7rem] rounded-lg drop-shadow-sm;
+}
+
+.priority-menu__wrapper {
+    @apply flex items-center justify-center;
+}
+
+.priority-menu-list {
+    @apply flex gap-3 px-[1rem] py-[.5rem] cursor-pointer hover:bg-neutral-50;
+    transition: all 0.2s ease-in-out;
+}
+
+.priority-menu-list > p {
+    @apply text-xs text-neutral-700;
+}
+
+.priority-menu__wrapper > div {
+    @apply w-[.9rem] h-[.9rem] rounded-full cursor-pointer;
+}
+
+.priority-menu__wrapper.urgent > div {
+    @apply bg-red-500;
+}
+
+.priority-menu__wrapper.high > div {
+    @apply bg-orange-500;
+}
+
+.priority-menu__wrapper.normal > div {
+    @apply bg-blue-500;
+}
+
+.priority-menu__wrapper.low > div {
+    @apply bg-tertiary-500;
 }
 
 /* STARRED STYLE */
@@ -207,6 +314,15 @@
     @apply text-sm py-[.3rem] px-[.6rem] mb-[.6rem] w-full max-w-[17rem] outline-0 border-[.3px] rounded;
 }
 
+/* UPDATE INPUT FIELD */
+.input-updateName__btn {
+    @apply text-xs bg-neutral-200 text-shades-white px-[.7rem] rounded-full py-[.2rem];
+}
+
+.input-updateName__btn.active {
+    @apply bg-green-500;
+}
+
 /******************************************************
 ************** INPUTS FOR UPDATING ********************
 ******************************************************/
@@ -216,6 +332,11 @@
 
 .input-close_icon {
     @apply text-center text-sm text-neutral-400 px-[.4rem] py-[.01rem] bg-neutral-200 rounded-full cursor-pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.input-close_icon:hover {
+    @apply bg-red-100 text-red-400;
 }
 
 /*****************************************************/
@@ -294,6 +415,10 @@
 
 .status-icon.toDo {
     @apply bg-tertiary-700;
+}
+
+.status-icon.default {
+    @apply bg-neutral-400;
 }
 
 /*****************************************************/

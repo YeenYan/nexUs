@@ -3,22 +3,32 @@
 namespace App\Http\Controllers\Workspace\Sections;
 
 use Inertia\Response;
+use App\Models\Task;
 use App\Models\Section;
 use App\Models\Workspace;
 use App\Models\Collection;
 use Illuminate\Http\Request;
-use App\Services\{WorkspaceService, SectionService};
+use App\Services\{
+    WorkspaceService,
+    SectionService,
+    TaskService
+};
 use App\Http\Controllers\Controller;
 
 class SectionsController extends Controller
 {
     protected $workspaceService;
     protected $sectionService;
+    protected $taskService;
 
-    public function __construct(WorkspaceService $workspaceService, SectionService $sectionService)
-    {
+    public function __construct(
+        WorkspaceService $workspaceService,
+        SectionService $sectionService,
+        TaskService $taskService
+    ) {
         $this->workspaceService = $workspaceService;
         $this->sectionService = $sectionService;
+        $this->taskService = $taskService;
     }
     /**
      * Display a listing of the resource.
@@ -61,17 +71,17 @@ class SectionsController extends Controller
         $validateData['collection_id'] = $current_collection_id;
 
         // Create the new Section
-        $newCollection = Section::create($validateData);
+        $newSection = Section::create($validateData);
 
         // Get the ID of the newly created section
-        $newSectionID = $newCollection->section_id;
+        $newSectionID = $newSection->section_id;
 
         // This is for the Vue Store to update the Current Sections Objects
         $all_collections = $this->workspaceService->getAllSections($current_collection_id);
 
         return response()->json([
-            'current_all_sections' => $all_collections,
-            // 'redirect_url' => $redirectUrl,
+            // 'current_all_sections' => $all_collections,
+            'new_section' => $newSection
         ], 200);
     }
 
@@ -82,8 +92,8 @@ class SectionsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(
-        Workspace $workspace,
         Request $request,
+        Workspace $workspace,
     ): Response {
 
         $data = $this->workspaceService->getWorkspaceData($workspace);
@@ -96,7 +106,17 @@ class SectionsController extends Controller
         // Retrieving current Tasks list
         $tasks_list = $this->sectionService->getTasksList($request->section_id);
 
-        // dd($section);
+
+        // It will count how many activities within that task
+        foreach ($tasks_list as $task) {
+            $task['total_activities'] = $this->taskService->count_task_activities($task['task_id']);
+
+            $task_model = Task::findOrFail($task['task_id']);
+
+            $task['completed_activities'] = $task_model->activities()->where('status_type', 2)->count();
+        }
+
+        // dd($tasks_list);
 
         return inertia('Workspace/Collections/Sections/Show', array_merge(
             $data,
@@ -142,10 +162,11 @@ class SectionsController extends Controller
 
             $section->update($validatedData);
 
-            $all_sections = $this->workspaceService->getAllSections($collection_id);
+            // $all_sections = $this->workspaceService->getAllSections($collection_id);
 
             return response()->json([
-                'current_all_sections' => $all_sections,
+                // 'current_all_sections' => $all_sections,
+                'updated_section' => $section
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to update section'], 500);
@@ -172,14 +193,11 @@ class SectionsController extends Controller
             // Delete the resource
             $section->delete();
 
-            $all_sections = $this->workspaceService->getAllSections($collection_id);
+            // $all_sections = $this->workspaceService->getAllSections($collection_id);
 
-            return response()->json([
-                'current_all_sections' => $all_sections,
-            ], 200);
-
-            // Return a success response
-            // return response()->json(['message' => 'Resource deleted successfully'], 200);
+            // return response()->json([
+            //     'current_all_sections' => $all_sections,
+            // ], 200);
         } else {
             // Return an error response if the resource was not found
             return response()->json(['message' => 'Resource not found'], 404);

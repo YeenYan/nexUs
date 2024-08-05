@@ -7,21 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Task extends Model
+class Activity extends Model
 {
     use HasFactory;
 
     // This tells the model that your key is a type of string and not an integer (UUIDs are strings).
     protected $keyType = 'string';
-    protected $primaryKey = 'task_id';
+    protected $primaryKey = 'activity_id';
 
     // Override to prevent default id auto-increment assumption
     public $incrementing = false;
 
     /**
-     * Automatically generate a UUID for the section_id when creating a new section
+     * Automatically generate a UUID for the activity_id when creating a new activity
      */
     protected static function boot()
     {
@@ -31,11 +30,10 @@ class Task extends Model
             if (empty($model->{$model->getKeyName()})) {
                 $uuid = (string) Str::uuid();
                 $shortUuid = self::shortenUuid($uuid);
-                $model->{$model->getKeyName()} = 'task-' . $shortUuid;
+                $model->{$model->getKeyName()} = 'act-' . $shortUuid;
             }
         });
     }
-
 
     /**
      * This will shorten the generated UUID and used above
@@ -52,26 +50,19 @@ class Task extends Model
 
 
     protected $fillable = [
-        'task_id',
-        'task_name',
+        'activity_id',
+        'activity_name',
+        'status_type',
         'priority_type',
-        'starred',
-        'section_id'
+        'due_date',
+        'description',
+        'task_id'
     ];
 
-
-    public function section(): BelongsTo
+    public function task(): BelongsTo
     {
         return $this->belongsTo(
-            \App\Models\Section::class,
-            'section_id'
-        );
-    }
-
-    public function activities(): HasMany
-    {
-        return $this->hasMany(
-            \App\Models\Activity::class,
+            \App\Models\Task::class,
             'task_id'
         );
     }

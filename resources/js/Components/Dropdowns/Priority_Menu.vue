@@ -33,7 +33,17 @@ const store = useStore();
 
 const set_priority = (val) => {
     store.state.selected_priority_type = val;
-    store.commit("showPriorityMenu", false);
+
+    if (store.state.priority_mode == "update_task_priority") {
+        store.commit("update_task_priority_type", val);
+        store.commit("showTaskPriorityMenu", false);
+    } else if (store.state.priority_mode == "update_activity_priority") {
+        store.commit("update_activity_priority_type", val);
+        store.commit("showActivityPriorityMenu", false);
+    }
+    store.commit("showSelectPriorityMenu", false);
+    store.commit("showTaskPriorityMenu", false);
+    store.commit("showActivityPriorityMenu", false);
 };
 </script>
 

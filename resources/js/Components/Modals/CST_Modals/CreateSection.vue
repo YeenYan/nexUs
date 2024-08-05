@@ -69,9 +69,9 @@ const create_section = async () => {
         );
 
         if (response.status == 200) {
-            console.log(response.data);
+            // console.log(response.data);
             form.errors = "";
-            store.commit("addSection", response.data.current_all_sections);
+            store.commit("addSection", response.data.new_section);
             close_modal();
         }
     } catch (error) {

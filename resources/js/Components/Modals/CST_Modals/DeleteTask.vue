@@ -1,25 +1,21 @@
 <template>
     <DeleteModalWrapper>
-        <template #title>{{ section_name }}</template>
+        <template #title>{{ current_task.task_name }}</template>
         <template #desc>
             <p>
-                <span>5</span>
-                tasks and
-                <span>10</span>
-                activities within this Section will be deleted.
+                <span>{{ current_task.total_activities }}</span>
+                activities within this Task will be deleted.
             </p>
         </template>
         <template #inputs>
             <div class="input__wrapper">
-                <label class="input-label"
-                    >Type the Section name to proceed</label
-                >
+                <label class="input-label">Type the Task name to proceed</label>
                 <div class="input__box">
                     <input
-                        v-model="new_section_name"
+                        v-model="new_task_name"
                         type="text"
                         class="input"
-                        placeholder="Enter Section Name"
+                        placeholder="Enter Task Name"
                     />
                 </div>
             </div>
@@ -27,7 +23,7 @@
         <template #buttons>
             <button
                 class="btn btn-ghost"
-                @click.prevent="close_delete_section_modal"
+                @click.prevent="close_delete_task_modal"
             >
                 Cancel
             </button>
@@ -61,25 +57,23 @@ const props = defineProps({
 /*****************************************
  ***** TOGGLING DELETE SECTION MODAL *****
  ****************************************/
-const close_delete_section_modal = () => {
-    store.commit("setDeleteSectionModalIsClose", false);
+const close_delete_task_modal = () => {
+    store.commit("setDeleteTaskModalIsClose", false);
 };
 
 /*****************************************
  *********** DELETING SECTION ************
  ****************************************/
 
-let section_name = ref();
-let new_section_name = ref();
+let blank_name = ref();
+let new_task_name = ref();
 let active_delete_btn = ref(false);
 
-let current_sectionID = ref(store.state.current_section_id);
-let current_sectionName = ref(store.state.current_section_name);
+let current_task = store.state.current_task;
+blank_name.value = store.state.current_task.task_name;
 
-section_name.value = current_sectionName.value;
-
-watch(new_section_name, (newVal) => {
-    if (newVal == section_name.value) {
+watch(new_task_name, (newVal) => {
+    if (newVal == blank_name.value) {
         active_delete_btn.value = true;
     } else {
         active_delete_btn.value = false;
@@ -89,15 +83,17 @@ watch(new_section_name, (newVal) => {
 const delete_section = async () => {
     try {
         const response = await axios.delete(
-            route("workspace.collection.sections.destroy", {
+            route("workspace.collection.section.task.destroy", {
                 workspace: props.workspace_id,
                 collection_id: props.collection_id,
-                section: current_sectionID.value,
+                section_id: current_task.section_id,
+                task: current_task.task_id,
             })
         );
         if (response.status == 200) {
-            store.commit("deleteSection");
-            store.commit("setDeleteSectionModalIsClose", false);
+            store.state.show_activity_side = false;
+            store.commit("delete_task_in_list");
+            store.commit("setDeleteTaskModalIsClose", false);
         }
     } catch (error) {
         console.log(error);

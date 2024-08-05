@@ -35,7 +35,13 @@
                             <div class="vertical-line"></div>
                             <div class="horizontal-line"></div>
                         </div>
-                        <p>
+                        <p
+                            :class="
+                                section.section_id === current_sec_id
+                                    ? 'active'
+                                    : ''
+                            "
+                        >
                             {{ section.section_name }}
                         </p>
                     </Link>
@@ -90,12 +96,21 @@ const generateSectionLink = (sectionId) => {
 };
 
 /*****************************************
+ * ACTIVE SECTION BASED FROM CURRENT URL *
+ ****************************************/
+let current_URL = window.location.pathname;
+let current_sec_id = ref("");
+
+const segments = current_URL.split("/");
+current_sec_id.value = segments.pop();
+
+/*****************************************
  * FETCHING SECTION OBJECT IN VUE STORE **
  ****************************************/
 let current_sections = ref(store.state.sections);
 
 watch(store.state.sections, (newValue, oldValue) => {
-    current_sections.value = newValue[0];
+    current_sections.value = newValue;
 });
 
 /**************************************
@@ -171,8 +186,12 @@ for (let i in active_workspaces) {
 }
 
 .section-list__wrapper > a > p {
-    @apply text-xs text-neutral-600 font-medium ml-[3.3rem] px-[.5rem] py-[.6rem] w-full rounded cursor-pointer hover:bg-blue-50;
+    @apply text-xs text-neutral-500 font-medium ml-[3.3rem] px-[.5rem] py-[.6rem] w-full rounded cursor-pointer hover:bg-neutral-100;
     transition: all 0.3s ease-in-out;
+}
+
+.section-list__wrapper > a > p.active {
+    @apply bg-neutral-100 text-neutral-800;
 }
 
 .section-line__wrapper {

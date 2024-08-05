@@ -64,7 +64,8 @@
                 <div
                     class="priority-menu-parent__wrapper"
                     v-if="
-                        active_priority_menu && store.state.active_priority_menu
+                        active_priority_menu &&
+                        store.state.active_select_priority_menu
                     "
                 >
                     <PriorityMenu />
@@ -101,8 +102,9 @@ const props = defineProps({
 
 let active_priority_menu = ref(false);
 const toggle_priority_menu = () => {
+    store.state.priority_mode = "select";
     active_priority_menu.value = true;
-    store.commit("showPriorityMenu", true);
+    store.commit("showSelectPriorityMenu", true);
 };
 
 let priority_type_text = (val) => {
@@ -146,8 +148,10 @@ const toggle_starred = () => {
 
     if (is_starred.value) {
         starred_value.value = 1;
+        form.starred = 1;
     } else {
         starred_value.value = 0;
+        form.starred = 0;
     }
 };
 
@@ -170,7 +174,7 @@ const store = useStore();
 const form = useForm({
     task_name: null,
     priority_type: null,
-    starred: starred_value.value,
+    starred: null,
 });
 
 const close_modal = () => {
@@ -179,6 +183,8 @@ const close_modal = () => {
 
 const create_task = async () => {
     form.priority_type = store.state.selected_priority_type;
+    form.starred = starred_value.value;
+
     try {
         const response = await axios.post(
             route("workspace.collection.section.task.store", {
@@ -191,15 +197,12 @@ const create_task = async () => {
         );
         if (response.status == 200) {
             form.errors = "";
-            store.commit("addTask", response.data.all_current_tasks);
+            store.commit("addTask", response.data.new_task);
             close_modal();
         }
     } catch (error) {
         if (error.response && error.response.status === 422) {
-            // form.errors = error.response.data.errors;
-            if (error.response.data.errors.hasOwnProperty("task_name")) {
-                form.errors = error.response.data.errors;
-            }
+            form.errors = error.response.data.errors;
             // Handle errors in your form or display them to the user
         } else if (error.response) {
             // Other server errors (handle as needed)
@@ -212,36 +215,4 @@ const create_task = async () => {
 };
 </script>
 
-<style lang="postcss" scoped>
-.task-option__wrapper {
-    @apply relative flex gap-2 mt-[-1rem];
-}
-
-.priority__wrapper.with-text,
-.starred__wrapper {
-    @apply border-[.3px] px-[.7rem] py-[.3rem] rounded-full cursor-pointer;
-}
-
-.priority__wrapper.with-text {
-    @apply flex gap-2;
-}
-
-.priority__wrapper.with-text > p,
-.starred__wrapper > p {
-    @apply text-xs text-neutral-600;
-}
-
-.starred__wrapper {
-    @apply grid items-center gap-2;
-    grid-template-columns: 1rem 1fr;
-}
-
-/* TASK MENU */
-.priority-menu-parent__wrapper {
-    @apply absolute top-[-2rem] left-[4rem] w-full max-w-[11rem];
-}
-
-.priority-error {
-    @apply absolute top-[1.6rem];
-}
-</style>
+<style lang="postcss" scoped></style>

@@ -92,7 +92,7 @@ class CollectionsController extends Controller
         // Return a JSON response with the newly created collection
         return response()->json([
             'current_collections' => $all_collections,
-            // 'redirect_url' => $redirectUrl,
+            'new_collection_id' => $newCollectionID
         ], 200);
     }
 

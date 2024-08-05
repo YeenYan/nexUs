@@ -36,10 +36,36 @@
                 </div>
                 <ul class="section-lists__container" v-else>
                     <li
-                        v-for="section in all_current_sections"
+                        v-for="(section, index) in all_current_sections"
                         :key="section.section_id"
                         class="section-lists__wrapper"
                     >
+                        <!--  -->
+                        <div
+                            class="input__box input-sectionName__wrapper"
+                            v-if="section.section_id == update_sectionID"
+                        >
+                            <input
+                                v-model="new_sectionName"
+                                class="input__update"
+                                type="text"
+                                id="update_name"
+                            />
+                            <!-- <p class="input-error_icon">!</p> -->
+                            <button
+                                @click="update_sectionName"
+                                class="input-updateName__btn"
+                                :class="{ active: active_button }"
+                            >
+                                Update
+                            </button>
+                            <p
+                                class="input-close_icon"
+                                @click.prevent="update_sectionID = false"
+                            >
+                                x
+                            </p>
+                        </div>
                         <Link
                             :href="
                                 route('workspace.collection.sections.show', {
@@ -54,35 +80,6 @@
                                 <p>
                                     {{ section.section_name }}
                                 </p>
-                                <div
-                                    class="input__box input-sectionName__wrapper"
-                                    v-if="
-                                        section.section_id == update_sectionID
-                                    "
-                                >
-                                    <input
-                                        v-model="new_sectionName"
-                                        class="input__update"
-                                        type="text"
-                                        id="update_name"
-                                    />
-                                    <!-- <p class="input-error_icon">!</p> -->
-                                    <button
-                                        @click="update_sectionName"
-                                        class="input-sectionName__btn"
-                                        :class="{ active: active_button }"
-                                    >
-                                        Update
-                                    </button>
-                                    <p
-                                        class="input-close_icon"
-                                        @click.prevent="
-                                            update_sectionID = false
-                                        "
-                                    >
-                                        x
-                                    </p>
-                                </div>
                             </div>
                             <!-- Progress bar -->
                             <div class="section-list-progress">
@@ -95,7 +92,10 @@
                             <ellipsisIcon
                                 class="section-list-ellipsis icon"
                                 @click.prevent="
-                                    toggle_sectionDD_menu(section.section_id)
+                                    toggle_sectionDD_menu(
+                                        section.section_id,
+                                        index
+                                    )
                                 "
                             />
                             <DropdownMenu
@@ -124,7 +124,8 @@
                                         @click.prevent="
                                             toggle_delete_section_modal(
                                                 section.section_id,
-                                                section.section_name
+                                                section.section_name,
+                                                index
                                             )
                                         "
                                     >
@@ -166,7 +167,7 @@
                             <!-- <p class="input-error_icon">!</p> -->
                             <button
                                 @click="update_colName"
-                                class="input-colName__btn"
+                                class="input-updateName__btn"
                                 :class="{ active: active_col_button }"
                             >
                                 Update
@@ -336,7 +337,7 @@ let all_current_sections = props.all_current_sections;
 store.state.sections = props.all_current_sections;
 
 watch(store.state.sections, (newValue, oldValue) => {
-    all_current_sections = newValue[0];
+    all_current_sections = newValue;
 });
 
 /*****************************************
@@ -417,7 +418,8 @@ const update_colName = async () => {
  **** TOGGLING SECTION DROPDOWN MENU *****
  ****************************************/
 let active_section = ref("");
-const toggle_sectionDD_menu = (id) => {
+const toggle_sectionDD_menu = (id, index) => {
+    store.state.current_section_index = index;
     if (active_section.value) {
         active_section.value = "";
     } else {
@@ -475,7 +477,7 @@ const update_sectionName = async () => {
         );
         if (response.status == 200) {
             update_sectionID.value = "";
-            store.commit("addSection", response.data.current_all_sections);
+            store.commit("updateSection", response.data.updated_section);
         }
     } catch (error) {
         console.log(error);
@@ -495,8 +497,9 @@ const toggle_delete_collection_modal = (id, name) => {
 /*****************************************
  ***** TOGGLING DELETE SECTION MODAL *****
  ****************************************/
-const toggle_delete_section_modal = (id, name) => {
+const toggle_delete_section_modal = (id, name, index) => {
     active_section.value = false;
+    store.state.current_section_index = index;
     store.state.current_section_id = id;
     store.state.current_section_name = name;
     store.commit("setDeleteSectionModalIsClose", true);
@@ -534,8 +537,12 @@ const toggle_delete_section_modal = (id, name) => {
     @apply grid gap-4;
 }
 
+.section-lists__wrapper {
+    @apply relative grid items-center;
+}
+
 .section-lists__wrapper > a {
-    @apply relative grid items-center gap-5 border-[.3px] border-neutral-300 p-[.9rem] rounded-lg;
+    @apply grid items-center gap-5 border-[.3px] border-neutral-300 p-[.9rem] rounded-lg;
     grid-template-columns: 1fr 0.7fr 0.1fr;
 }
 
@@ -548,19 +555,11 @@ const toggle_delete_section_modal = (id, name) => {
 }
 
 .input-sectionName__wrapper {
-    @apply absolute flex items-center gap-2;
+    @apply absolute w-[98%] left-[.2rem] h-[90%] flex items-center gap-2 bg-shades-white z-[2];
 }
 
 .input-sectionName__wrapper > .input-error_icon {
     @apply relative top-0;
-}
-
-.input-sectionName__btn {
-    @apply text-xs bg-neutral-200 text-shades-white px-[.7rem] rounded-full py-[.2rem];
-}
-
-.input-sectionName__btn.active {
-    @apply bg-green-500;
 }
 
 .section-list-progress {
@@ -639,14 +638,6 @@ const toggle_delete_section_modal = (id, name) => {
 
 .input-collectionName__wrapper > .input-error_icon {
     @apply static !important;
-}
-
-.input-colName__btn {
-    @apply text-xs bg-neutral-200 text-shades-white px-[.7rem] rounded-full py-[.2rem];
-}
-
-.input-colName__btn.active {
-    @apply bg-green-500;
 }
 
 .collection-progress-info__wrapper {
