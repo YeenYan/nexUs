@@ -6,6 +6,7 @@ use App\Models\User;
 use Inertia\Response;
 use App\Models\Workspace;
 use App\Models\Collection;
+use App\Models\Workspace_Collab;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Services\WorkspaceService;
@@ -168,4 +169,5 @@ class WorkspaceController extends Controller
     // public function destroy($id)
     // {
     // }
+
 }

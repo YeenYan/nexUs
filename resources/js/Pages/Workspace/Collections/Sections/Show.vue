@@ -25,7 +25,11 @@
                     />
                 </div>
                 <div class="search-input__wrapper">
-                    <input type="text" placeholder="Search Task" />
+                    <input
+                        type="text"
+                        placeholder="Search Task"
+                        v-model="searchTerm"
+                    />
                 </div>
 
                 <div class="task-group__wrapper scroll-style">
@@ -51,7 +55,7 @@
                         <!-- <Link> -->
                         <li
                             class="task-list__wrapper"
-                            v-for="(task, index) in current_tasks_list"
+                            v-for="(task, index) in filteredTasks"
                             :key="task.task_id"
                         >
                             <!-- Task Title -->
@@ -145,6 +149,16 @@
                         </li>
 
                         <!-- </Link> -->
+
+                        <div>
+                            <input v-model="name" placeholder="Invitee Name" />
+                            <input
+                                v-model="email"
+                                placeholder="Invitee Email"
+                            />
+                            <button @click="sendInvite">Send Invite</button>
+                            <button @click="save_member">Save Member</button>
+                        </div>
                     </ul>
                 </div>
             </div>
@@ -198,7 +212,11 @@
                 </div>
 
                 <div class="search-input__wrapper">
-                    <input type="text" placeholder="Search Activity" />
+                    <input
+                        type="text"
+                        placeholder="Search Activity"
+                        v-model="search_activity"
+                    />
                 </div>
 
                 <div class="activity-group__wrapper scroll-style">
@@ -235,7 +253,7 @@
                                     </p>
                                     <li
                                         class="activity-table-list__text activity_name"
-                                        v-for="activity in complete_activity"
+                                        v-for="activity in filtered_complete_activity"
                                         :key="activity.activity_id"
                                         @click.prevent="
                                             show_activity_details(activity)
@@ -257,7 +275,7 @@
                                     </div>
                                     <li
                                         class="activity-table-list__group"
-                                        v-for="activity in complete_activity"
+                                        v-for="activity in filtered_complete_activity"
                                         :key="activity.activity_id"
                                     >
                                         <div class="priority__wrapper">
@@ -317,7 +335,7 @@
                                     </p>
                                     <li
                                         class="activity-table-list__text activity_name"
-                                        v-for="activity in in_progress_activity"
+                                        v-for="activity in filtered_in_progress_activity"
                                         :key="activity.activity_id"
                                         @click.prevent="
                                             show_activity_details(activity)
@@ -337,7 +355,7 @@
                                     </div>
                                     <li
                                         class="activity-table-list__group"
-                                        v-for="activity in in_progress_activity"
+                                        v-for="activity in filtered_in_progress_activity"
                                         :key="activity.activity_id"
                                     >
                                         <div class="priority__wrapper">
@@ -397,7 +415,7 @@
                                     </p>
                                     <li
                                         class="activity-table-list__text activity_name"
-                                        v-for="activity in to_do_activity"
+                                        v-for="activity in filtered_to_do_activity"
                                         :key="activity.activity_id"
                                         @click.prevent="
                                             show_activity_details(activity)
@@ -417,7 +435,7 @@
                                     </div>
                                     <li
                                         class="activity-table-list__group"
-                                        v-for="activity in to_do_activity"
+                                        v-for="activity in filtered_to_do_activity"
                                         :key="activity.activity_id"
                                     >
                                         <div class="priority__wrapper">
@@ -507,8 +525,6 @@ const props = defineProps({
 
 const store = useStore();
 
-// console.log(props.tasks_list);
-
 /*****************************************
  ***** LOGIC FOR THE TASK PERCENTAGE *****
  ****************************************/
@@ -553,11 +569,17 @@ store.state.sections = props.all_current_sections;
 store.state.tasks = props.tasks_list;
 let current_tasks_list = store.state.tasks;
 
-// watch(store.state.tasks, (newValue, oldValue) => {
-//     console.log(current_tasks_list);
-//     // current_tasks_list = newValue[0];
-//     console.log("toggled");
-// });
+/*****************************************
+ ********* SEARCH FUNCTIONALITY **********
+ ****************************************/
+
+const searchTerm = ref("");
+
+const filteredTasks = computed(() => {
+    return current_tasks_list.filter((task) =>
+        task.task_name.toLowerCase().includes(searchTerm.value.toLowerCase())
+    );
+});
 
 /*****************************************
  ****** IDENTIFYING PRIORITY STATUS ******
@@ -767,6 +789,35 @@ let in_progress_activity = computed(() => store.state.in_progress_activity);
 let to_do_activity = computed(() => store.state.to_do_activity);
 
 /*****************************************
+ ***** ACTIVITY SEARCH FUNCTIONALITY *****
+ ****************************************/
+const search_activity = ref("");
+
+const filtered_complete_activity = computed(() => {
+    return complete_activity.value.filter((activity) =>
+        activity.activity_name
+            .toLowerCase()
+            .includes(search_activity.value.toLowerCase())
+    );
+});
+
+const filtered_in_progress_activity = computed(() => {
+    return in_progress_activity.value.filter((activity) =>
+        activity.activity_name
+            .toLowerCase()
+            .includes(search_activity.value.toLowerCase())
+    );
+});
+
+const filtered_to_do_activity = computed(() => {
+    return to_do_activity.value.filter((activity) =>
+        activity.activity_name
+            .toLowerCase()
+            .includes(search_activity.value.toLowerCase())
+    );
+});
+
+/*****************************************
  ******** TOGGLING ACTIVTY MODAL *********
  ****************************************/
 const toggle_activity_modal = () => {
@@ -793,6 +844,26 @@ const show_activity_details = (activity) => {
 const toggle_delete_task_modal = () => {
     show_taskDD_menu.value = false;
     store.commit("setDeleteTaskModalIsClose", true);
+};
+
+/*****************************************
+ ****** EMAIL *******
+ ****************************************/
+const name = ref("");
+const email = ref("");
+
+const sendInvite = () => {
+    axios
+        .post(route("email.invite"), {
+            name: name.value,
+            email: email.value,
+        })
+        .then((response) => {
+            // console.log(response.data.workspace_data);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
 };
 </script>
 

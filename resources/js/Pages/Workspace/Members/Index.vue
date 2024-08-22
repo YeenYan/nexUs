@@ -8,6 +8,13 @@
         <div class="breadcrumbs-header">
             <p>Members</p>
         </div>
+
+        <section class="container">
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Inventore, iste!
+            </p>
+        </section>
     </Workspace>
 </template>
 

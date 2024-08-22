@@ -7,15 +7,22 @@ use App\Models\Workspace;
 use App\Models\Collection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Services\WorkspaceService;
+use App\Services\{
+    WorkspaceService,
+    CollectionService
+};
 
 class CollectionsController extends Controller
 {
     protected $workspaceService;
+    protected $collectionService;
 
-    public function __construct(WorkspaceService $workspaceService)
-    {
+    public function __construct(
+        WorkspaceService $workspaceService,
+        CollectionService $collectionService
+    ) {
         $this->workspaceService = $workspaceService;
+        $this->collectionService = $collectionService;
     }
 
     /**
@@ -30,7 +37,10 @@ class CollectionsController extends Controller
 
         $data = $this->workspaceService->getWorkspaceData($workspace);
 
-        $sections = $this->workspaceService->getAllSections($request->collection_id);
+        $sections_data = $this->collectionService->get_all_sections($request->collection_id);
+
+        $inProgress = $this->collectionService->get_collection_progress($request->collection_id);
+
 
         return inertia(
             'Workspace/Collections/Index',
@@ -38,7 +48,9 @@ class CollectionsController extends Controller
                 $data,
                 [
                     'collection_id' => $request->collection_id,
-                    'all_current_sections' => $sections
+                    'overall_total_activities' => $inProgress['total_activities'],
+                    'overall_completed' => $inProgress['completed'],
+                    'all_current_sections' => $sections_data
                 ]
             )
         );
@@ -187,57 +199,4 @@ class CollectionsController extends Controller
             return response()->json(['message' => 'Resource not found'], 404);
         }
     }
-
-    // public function destroy(Request $request, $workspace_id, $collection_id)
-    // {
-    //     // Find the current collection and delete it
-    //     $collection = Collection::where('workspace_id', $workspace_id)->where('collection_id', $collection_id)->firstOrFail();
-
-    //     if ($collection) {
-    //         $collection->delete();
-
-    //         // Get all collections in the workspace after deletion
-    //         $all_collections = Collection::where('workspace_id', $workspace_id)
-    //             ->orderBy('collection_id')
-    //             ->get();
-
-    //         // Get the next collection
-    //         $nextCollection = Collection::where('workspace_id', $workspace_id)
-    //             ->where('collection_id', '>', $collection_id)
-    //             ->orderBy('collection_id')
-    //             ->first();
-
-    //         // If no next collection found, get the first collection in the workspace
-    //         if (!$nextCollection) {
-    //             $nextCollection = Collection::where('workspace_id', $workspace_id)
-    //                 ->orderBy('collection_id')
-    //                 ->first();
-    //         }
-
-    //         // Prepare the JSON response data
-    //         $response = [
-    //             'current_collections' => $all_collections,
-    //         ];
-
-    //         // If a next collection is found, redirect to it and include the JSON response data
-    //         if ($nextCollection) {
-    //             return response()->json(array_merge($response, [
-    //                 'redirect_url' => route('collections.show', [
-    //                     'workspace' => $workspace_id,
-    //                     'collection' => $nextCollection->collection_id,
-    //                 ])
-    //             ]), 200);
-    //         } else {
-    //             // Handle the case where no collections are found
-    //             return response()->json(array_merge($response, [
-    //                 'redirect_url' => route('workspace.dashboard.index', [
-    //                     'workspace' => $workspace_id,
-    //                 ])
-    //             ]), 200);
-    //         }
-    //     } else {
-    //         // Handle the case where the collection was not found
-    //         return response()->json(['message' => 'Collection not found'], 404);
-    //     }
-    // }
 }

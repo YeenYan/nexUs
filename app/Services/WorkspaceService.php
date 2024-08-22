@@ -39,18 +39,6 @@ class WorkspaceService
     return $collections;
   }
 
-
-  public function getAllSections($collection_id)
-  {
-
-    $collection = Collection::findOrFail($collection_id);
-
-    // Get all collections for the workspace by descending order
-    $sections = $collection->sections()->mostRecent()->get();
-
-    return $sections;
-  }
-
   public function redirectToActiveWorkspace()
   {
     $activeWorkspace = $this->getActiveWorkspace();

@@ -2,31 +2,28 @@
 
 namespace App\Models;
 
-use Tuupola\Base62;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Workspace extends Model
+class Workspace_Collab extends Model
 {
     use HasFactory;
-
-    // This tells the model that your key is a type of string and not an integer (UUIDs are strings).
     protected $keyType = 'string';
-    protected $primaryKey = 'workspace_id';
+    protected $primaryKey = 'workspace_collab_id';
 
     // tell the model not to use the incrementing system for this type of key
     public $incrementing = false;
 
     protected $fillable = [
+        'workspace_collab_id',
         'workspace_id',
-        'workspace_name',
-        'avatar',
-        'created_by',
-        'active'
+        'owner_id',
+        'member_id'
     ];
+
 
     /**
      * Automatically generate a UUID for the user_id when creating a new user
@@ -40,7 +37,7 @@ class Workspace extends Model
             if (empty($model->{$model->getKeyName()})) {
                 $uuid = (string) Str::uuid();
                 $shortUuid = self::shortenUuid($uuid);
-                $model->{$model->getKeyName()} = 'wp-' . $shortUuid;
+                $model->{$model->getKeyName()} = 'wc-' . $shortUuid;
             }
         });
     }
@@ -60,35 +57,25 @@ class Workspace extends Model
 
 
     /**
-     * Relationship where the Workspace belongs to an owner (user)
+     * Relationship where the Workspace_Collab belongs to a Workspace
      */
-    public function owner(): BelongsTo
+    public function workspace(): BelongsTo
     {
         return $this->belongsTo(
+            \App\Models\Workspace::class,
+            'workspace_id'
+        );
+    }
+
+
+    /**
+     * Relationship where the Workspace_Collab has many Users
+     */
+    public function users(): HasMany
+    {
+        return $this->hasMany(
             \App\Models\User::class,
             'user_id'
-        );
-    }
-
-    /**
-     * Relationship where the Workspace has many Collections
-     */
-    public function collections(): HasMany
-    {
-        return $this->hasMany(
-            \App\Models\Collection::class,
-            'workspace_id'
-        );
-    }
-
-    /**
-     * Relationship where the Workspace has many Workspace_collab
-     */
-    public function workspace_collab(): HasMany
-    {
-        return $this->hasMany(
-            \App\Models\Workspace_Collab::class,
-            'workspace_id'
         );
     }
 }

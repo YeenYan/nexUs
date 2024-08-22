@@ -45,6 +45,13 @@ Route::delete('logout', [AuthController::class, 'destroy'])->name('logout');
 Route::resource('user-account', UserAccountController::class)
   ->only(['create', 'store']);
 
+Route::post('send-invite', [UserAccountController::class, 'sendInvite'])->name('email.invite');
+
+Route::get('{workspace}/uuids/{owner_id}/{member_id}', [UserAccountController::class, 'success_email'])->name('success.index');
+
+Route::post('{workspace}/uuids/{owner_id}/{member_id}', [UserAccountController::class, 'add_member_to_workspace'])
+  ->name('add_member');
+
 
 /*************************************
  ************ WORKSPACE **************
@@ -60,6 +67,8 @@ Route::prefix('{workspace}')
   ->middleware(['auth'])
   ->group(
     function () {
+
+
       // Dashboard routes
       Route::resource('dashboard', DashboardController::class)
         ->only(['index']);
@@ -100,6 +109,8 @@ Route::prefix('{workspace}')
           Route::prefix('{section_id}')
             ->name('section.')
             ->group(function () {
+
+              // Route::post('send-invite', [UserAccountController::class, 'sendInvite'])->name('email.invite');
 
               Route::resource('task', TaskController::class)
                 ->only(['store', 'destroy']);
@@ -161,6 +172,11 @@ Route::prefix('{workspace}')
  *** SWITCHING BETWEEN WORKSPACES ****
  ************************************/
 Route::post('/workspace/switch', [WorkspaceController::class, 'switchWorkspace'])->name('workspace.switch');
+
+/************************************************
+ *** ADDING MEMBER TO WORKSPACE_COLLAB TABLE ****
+ ***********************************************/
+
 
 /*************************************
  *** NAVIGATE TO THE PREVIOUS PAGE ***

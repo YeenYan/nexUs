@@ -10,6 +10,7 @@ use App\Models\Collection;
 use Illuminate\Http\Request;
 use App\Services\{
     WorkspaceService,
+    CollectionService,
     SectionService,
     TaskService
 };
@@ -18,15 +19,18 @@ use App\Http\Controllers\Controller;
 class SectionsController extends Controller
 {
     protected $workspaceService;
+    protected $collectionService;
     protected $sectionService;
     protected $taskService;
 
     public function __construct(
         WorkspaceService $workspaceService,
+        CollectionService $collectionService,
         SectionService $sectionService,
         TaskService $taskService
     ) {
         $this->workspaceService = $workspaceService;
+        $this->collectionService = $collectionService;
         $this->sectionService = $sectionService;
         $this->taskService = $taskService;
     }
@@ -77,7 +81,7 @@ class SectionsController extends Controller
         $newSectionID = $newSection->section_id;
 
         // This is for the Vue Store to update the Current Sections Objects
-        $all_collections = $this->workspaceService->getAllSections($current_collection_id);
+        $all_collections = $this->collectionService->get_all_sections($request->collection_id);
 
         return response()->json([
             // 'current_all_sections' => $all_collections,
@@ -98,7 +102,7 @@ class SectionsController extends Controller
 
         $data = $this->workspaceService->getWorkspaceData($workspace);
 
-        $all_sections = $this->workspaceService->getAllSections($request->collection_id);
+        $all_sections = $this->collectionService->get_all_sections($request->collection_id);
 
         // Retrieving Section Information
         $section = $this->sectionService->getSectionData($request->section_id);

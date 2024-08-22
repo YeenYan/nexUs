@@ -16,9 +16,6 @@ class SectionService
  {
   $section = Section::findOrFail($sectionID);
 
-  // Get all tasks for the section by descending order
-  $sections = $section->tasks()->mostRecent()->get();
-
   return $section;
  }
 

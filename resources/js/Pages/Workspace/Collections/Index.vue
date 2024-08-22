@@ -84,9 +84,31 @@
                             <!-- Progress bar -->
                             <div class="section-list-progress">
                                 <div class="base">
-                                    <div class="bar"></div>
+                                    <div
+                                        class="bar"
+                                        :class="
+                                            percentage_color(
+                                                section.total_count,
+                                                section.completed_count
+                                            )
+                                        "
+                                        :style="{
+                                            width:
+                                                percentage(
+                                                    section.total_count,
+                                                    section.completed_count
+                                                ) + '%',
+                                        }"
+                                    ></div>
                                 </div>
-                                <p>65%</p>
+                                <p>
+                                    {{
+                                        percentage(
+                                            section.total_count,
+                                            section.completed_count
+                                        )
+                                    }}%
+                                </p>
                             </div>
 
                             <ellipsisIcon
@@ -211,7 +233,7 @@
                     <div class="collection-progress-info__wrapper">
                         <CircleProgress
                             :rValue="50"
-                            :percentValue="90"
+                            :percentValue="collection_percentage()"
                             :strokeWidth="1"
                         />
                         <p>
@@ -318,6 +340,8 @@ const props = defineProps({
     avatar: String,
     all_collections: Object,
     collection_id: String,
+    overall_total_activities: Number,
+    overall_completed: Number,
     all_current_sections: Object,
 });
 
@@ -328,6 +352,52 @@ const collection = props.all_collections.find(
 );
 
 let collection_created_at = collection.created_at.split("T")[0];
+
+/*****************************************
+ **** LOGIC FOR COLLECTION PERCENTAGE ****
+ ****************************************/
+
+let total_activities = props.overall_total_activities;
+let completed_activities = props.overall_completed;
+
+const collection_percentage = () => {
+    if (total_activities < 1) {
+        return 0;
+    } else {
+        return Math.ceil((completed_activities / total_activities) * 100);
+    }
+};
+
+/*****************************************
+ ***** LOGIC FOR THE SECTION PERCENTAGE *****
+ ****************************************/
+
+const percentage = (total, completed) => {
+    if (total < 1) {
+        return 0;
+    } else {
+        return Math.ceil((completed / total) * 100);
+    }
+};
+
+const percentage_color = (total, completed) => {
+    if (total < 1) {
+        return "";
+    } else {
+        let percent_value = Math.ceil((completed / total) * 100);
+        if (percent_value <= 25) {
+            return "red";
+        } else if (percent_value <= 50) {
+            return "orange";
+        } else if (percent_value <= 75) {
+            return "yellow";
+        } else if (percent_value > 75) {
+            return "green";
+        } else {
+            return "";
+        }
+    }
+};
 
 /*****************************************
  * STORING SECTION OBJECT IN VUE STORE ***
@@ -563,7 +633,9 @@ const toggle_delete_section_modal = (id, name, index) => {
 }
 
 .section-list-progress {
-    @apply flex gap-4 items-center;
+    /* @apply flex gap-4 items-center; */
+    @apply grid gap-4 items-center;
+    grid-template-columns: 2fr 0.2fr;
 }
 
 .section-list-progress > .base {
@@ -571,7 +643,23 @@ const toggle_delete_section_modal = (id, name, index) => {
 }
 
 .section-list-progress > .base > .bar {
-    @apply bg-blue-500 w-[80%] h-full rounded-full;
+    @apply h-full rounded-full;
+}
+
+.section-list-progress > .base > .bar.green {
+    @apply bg-green-500;
+}
+
+.section-list-progress > .base > .bar.yellow {
+    @apply bg-yellow-500;
+}
+
+.section-list-progress > .base > .bar.orange {
+    @apply bg-orange-500;
+}
+
+.section-list-progress > .base > .bar.red {
+    @apply bg-red-500;
 }
 
 .section-list-progress > p {
